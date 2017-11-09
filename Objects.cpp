@@ -15,9 +15,10 @@
 
 #include "Objects.h"
 #include <GL/glui.h>
+#include <iostream>
 
 #include "load3ds.c"
-
+using namespace std;
 // Variable para inicializar los vectores correpondientes con los valores iniciales
 GLfloat light0_ambient_c[4]  = {   0.2f,   0.2f,  0.2f, 1.0f };
 GLfloat light0_diffuse_c[4]  = {   0.8f,   0.8f,  0.8f, 1.0f };
@@ -50,7 +51,6 @@ TGui    gui;
 
 TPrimitiva::TPrimitiva(int DL, int t)
 {
-
     ID   = DL;
     tipo = t;
 
@@ -86,11 +86,19 @@ TPrimitiva::TPrimitiva(int DL, int t)
             modelo1 = Load3DS("../../Modelos/RuedaFord.3ds", &num_vertices1);
             break;
 		}
-		case 23:{
+		case 20:{
+		    tx = -20.0;
+		    ty =  0.0;
+		    tz =  0.0;
             rx =  0.0;
             ry =  0.0;
             rz =  0.0;
             modelo0 = Load3DS("../../Modelos/Rocks.3ds", &num_vertices0);
+            break;
+		}
+		case 21:{
+		    modelo0 = Load3DS("../../Modelos/base.3ds", &num_vertices0);
+            break;
 		}
 	} // switch
 }
@@ -100,28 +108,29 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
     glm::mat4   modelMatrix;
     glm::mat4   modelViewMatrix;
     switch (tipo) {
-        case 23:{
-            if (escena.show_car) {
+        case 21:
+        case 20:{
+            if(escena.show_road){
+                 cout << "In" << endl;
                 modelMatrix     = glm::mat4(1.0f);
+                //modelMatrix     = glm::translate(modelMatrix,glm::vec3(tx, ty, tz));
                 modelViewMatrix = escena.viewMatrix * modelMatrix;
-                glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
+
+                glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
+                // Asociamos los vértices y sus normales
                 glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0);
                 glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0+3);
 
+                glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
+                cout << modelo0 << endl;
                 glDrawArrays(GL_TRIANGLES, 0, num_vertices0);
-
-                // Pintar las líneas
-                glUniform4fv(escena.uColorLocation, 1, colores[1]);
-                //                   Asociamos los vértices y sus normales
-                glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo1);
-                glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo1+3);
-
-                glDrawArrays(GL_TRIANGLES, 0, num_vertices1);
+                cout << "Final" << endl;
             }
             break;
         }
         case CARRETERA_ID: {
             if (escena.show_road) {
+                cout << "Coche "<< modelo0 << endl;
                 // Cálculo de la ModelView
                 modelMatrix     = glm::mat4(1.0f); // matriz identidad
                 modelViewMatrix = escena.viewMatrix * modelMatrix;
@@ -150,6 +159,7 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
         }
         case COCHE_ID: {
             if (escena.show_car) {
+
                 glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
                 // Asociamos los vértices y sus normales
                 glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0);

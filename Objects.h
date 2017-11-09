@@ -143,6 +143,7 @@ public: // Atributos de la clase
         int     show_car;
         int     show_wheels;
         int     show_road;
+        int     show_rocks;
 
         GLfloat view_position[3];
         GLfloat view_rotate[16];

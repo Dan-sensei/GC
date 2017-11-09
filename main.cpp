@@ -170,19 +170,21 @@ int main(int argc, char* argv[])
     TPrimitiva *road = new TPrimitiva(CARRETERA_ID, CARRETERA_ID);
     TPrimitiva *car1 = new TPrimitiva(1, COCHE_ID);
     TPrimitiva *car2 = new TPrimitiva(2, COCHE_ID);
-    TPrimitiva *rocks = new TPrimitiva(3, 23);
-
+    TPrimitiva *rocks = new TPrimitiva(3, 20);
+    TPrimitiva *base = new TPrimitiva(4, 21);
+/*
     car2->colores[0][0] = 0.3;
     car2->colores[0][1] = 0.8;
     car2->colores[0][2] = 0.4;
     car2->colores[0][3] = 1.0;
     car2->tx = 2;
     car2->tz = 3;
-
+*/
     escena.AddObject(road);
     escena.AddCar(car1);
     escena.AddCar(car2);
-    escena.AddCar(rocks);
+    escena.AddObject(rocks);
+    escena.AddObject(base);
     /**** Regular GLUT main loop ****/
     glutMainLoop();
 
