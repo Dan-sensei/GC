@@ -29,7 +29,7 @@
 
 // Identificadores internos de los objetos
 #define CARRETERA_ID    10
-
+#define LIGHTS_ID       15
 #define COCHE_ID	    100 // Un coche cada 100
 
 // IDs para los callbacks de TGui

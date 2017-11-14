@@ -98,12 +98,12 @@ static void SpecialKey(int key, int x, int y)
     switch (key)
     {
         case GLUT_KEY_UP:   // El coche avanza
-            car->rr+=8;
-            car->tz += 0.05;
-            break;
-        case GLUT_KEY_DOWN:   // El coche retrocede
             car->rr-=8;
             car->tz -= 0.05;
+            break;
+        case GLUT_KEY_DOWN:   // El coche retrocede
+            car->rr+=8;
+            car->tz += 0.05;
             break;
     }
 
@@ -169,9 +169,8 @@ int main(int argc, char* argv[])
     // Crea los objetos
     TPrimitiva *road = new TPrimitiva(CARRETERA_ID, CARRETERA_ID);
     TPrimitiva *car1 = new TPrimitiva(1, COCHE_ID);
-    TPrimitiva *car2 = new TPrimitiva(2, COCHE_ID);
     TPrimitiva *rocks = new TPrimitiva(3, 20);
-    TPrimitiva *base = new TPrimitiva(4, 21);
+    TPrimitiva *lights = new TPrimitiva(LIGHTS_ID,LIGHTS_ID);
 /*
     car2->colores[0][0] = 0.3;
     car2->colores[0][1] = 0.8;
@@ -179,12 +178,16 @@ int main(int argc, char* argv[])
     car2->colores[0][3] = 1.0;
     car2->tx = 2;
     car2->tz = 3;
+
+    base->colores[0][0] = 0.3;
+    base->colores[0][1] = 0.8;
+    base->colores[0][2] = 0.4;
+    base->colores[0][3] = 1.0;
 */
     escena.AddObject(road);
     escena.AddCar(car1);
-    escena.AddCar(car2);
     escena.AddObject(rocks);
-    escena.AddObject(base);
+    escena.AddObject(lights);
     /**** Regular GLUT main loop ****/
     glutMainLoop();
 
