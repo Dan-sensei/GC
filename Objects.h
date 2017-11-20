@@ -30,6 +30,7 @@
 // Identificadores internos de los objetos
 #define CARRETERA_ID    10
 #define LIGHTS_ID       15
+#define BUILDINGS_ID    500
 #define COCHE_ID	    100 // Un coche cada 100
 
 // IDs para los callbacks de TGui
@@ -73,6 +74,7 @@ class TPrimitiva
 public: // Atributos de la clase
 		int ID;				    // DisplayLists del objeto
 		int tipo;               // Tipo de Objeto
+
 		float tx,ty,tz; 	    // Posición del objeto
 		float sx,sy,sz; 	    // Escalado del objeto
 		float rx,ry,rz;     	// Rotación del objeto
@@ -84,6 +86,30 @@ public: // Atributos de la clase
 
         float   *modelo1;        // modelo a representar
 		int     num_vertices1;   // número de vértices
+
+		float   *modelo2;
+		int     num_vertices2;
+
+		float   *modelo3;
+		int     num_vertices3;
+
+		float   *modelo4;
+		int     num_vertices4;
+
+		float   *modelo5;
+		int     num_vertices5;
+
+		float   *modelo6;
+		int     num_vertices6;
+
+		float   *modelo7;
+		int     num_vertices7;
+
+		float   *modelo8;
+		int     num_vertices8;
+
+		float   *modelo9;
+		int     num_vertices9;
 
 public: // Métodos
  		TPrimitiva(int DL, int tipo);

@@ -366,11 +366,11 @@
 	<fstream>
 	<stdexcept>
 
-1510228742 source:c:\users\datri\documents\github\gc\main.cpp
+1510746584 source:c:\users\datri\documents\github\gc\main.cpp
 	"Objects.h"
 	<GL\glui.h>
 
-1510220209 c:\users\datri\documents\github\gc\objects.h
+1510750276 c:\users\datri\documents\github\gc\objects.h
 	"Shader.h"
 	"Program.h"
 	<GL/glui.h>
@@ -378,7 +378,7 @@
 	<glm/gtc/matrix_transform.hpp>
 	<glm/gtc/type_ptr.hpp>
 
-1510228750 source:c:\users\datri\documents\github\gc\objects.cpp
+1510753062 source:c:\users\datri\documents\github\gc\objects.cpp
 	"Objects.h"
 	<GL/glui.h>
 	<iostream>

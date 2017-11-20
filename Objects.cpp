@@ -41,6 +41,10 @@ float view_position_c[3] = { 0.0, -2.0, -9.0 };
 
 float coloresc_c[2][4] = { {0.8, 0.5, 0.0, 1.0}, {0.5, 0.5, 0.5, 1.0}}; // Color del coche
 float coloresr_c[2][4] = { {0.3, 0.3, 0.3, 1.0}, {1.0, 1.0, 1.0, 1.0}}; // Color de la carretera
+float coloresr_o[2][4] = {
+        {0.223529412, 0.282352941, 0.37254902, 1.0}, //Azul
+        {1.0, 1.0, 1.0, 1.0}
+    };
 
 //************************************************************** Variables de clase
 
@@ -53,6 +57,9 @@ TPrimitiva::TPrimitiva(int DL, int t)
 {
     ID   = DL;
     tipo = t;
+    float constante_c = 1.0f/255;
+
+
 
     tx = ty = tz = 0;
     sx = sy = sz = 1;
@@ -60,7 +67,7 @@ TPrimitiva::TPrimitiva(int DL, int t)
 	switch (tipo) {
 		case CARRETERA_ID: {  // Creación de la carretera
 		    tx = ty = tz = 0;
-            memcpy(colores, coloresr_c, 8*sizeof(float));
+            memcpy(colores, coloresr_o, 8*sizeof(float));
             //************************ Cargar modelos 3ds ***********************************
             // formato 8 floats por vértice (x, y, z, A, B, C, u, v)
             modelo0 = Load3DS("../../Modelos/base.3ds", &num_vertices0);
@@ -85,12 +92,27 @@ TPrimitiva::TPrimitiva(int DL, int t)
 		}
 		case LIGHTS_ID:{
 		    tx = ty = tz = 0;
-            memcpy(colores, coloresr_c, 8*sizeof(float));
+            memcpy(colores, coloresr_o, 8*sizeof(float));
             modelo0 = Load3DS("../../Modelos/Floating_lamps.3ds", &num_vertices0);
             modelo1 = Load3DS("../../Modelos/Simple_lamp.3ds", &num_vertices1);
+            modelo2 = Load3DS("../../Modelos/Perfect_lamp.3ds", &num_vertices2);
             break;
 		}
-
+        case BUILDINGS_ID: {
+            tx = ty = tz = 0;
+            memcpy(colores, coloresr_o, 8*sizeof(float));
+            modelo0 = Load3DS("../../Modelos/Minicity.3ds", &num_vertices0);
+            modelo1 = Load3DS("../../Modelos/Bridge.3ds", &num_vertices1);
+            modelo2 = Load3DS("../../Modelos/Tower.3ds", &num_vertices2);
+            modelo3 = Load3DS("../../Modelos/Factory.3ds", &num_vertices3);
+            modelo4 = Load3DS("../../Modelos/Neon_tower.3ds", &num_vertices4);
+            modelo5 = Load3DS("../../Modelos/Quad_tower.3ds", &num_vertices5);
+            modelo6 = Load3DS("../../Modelos/Central_tower.3ds", &num_vertices6);
+            modelo7 = Load3DS("../../Modelos/Big_tower1.3ds", &num_vertices7);
+            modelo8 = Load3DS("../../Modelos/Big_tower2.3ds", &num_vertices8);
+            modelo9 = Load3DS("../../Modelos/Tunel.3ds", &num_vertices9);
+            break;
+        }
 	} // switch
 }
 
@@ -101,13 +123,12 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
     glm::mat4   modelViewMatrix;
     switch (tipo) {
         case LIGHTS_ID:{
-            tx = ty = tz = 0;
             modelMatrix     = glm::mat4(1.0f);
             modelMatrix     = glm::translate(modelMatrix,glm::vec3(tx, ty, tz));
             modelViewMatrix = escena.viewMatrix * modelMatrix;
             glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
 
-            glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
+            glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[1]);
             // Asociamos los vértices y sus normales
             glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0);
             glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0+3);
@@ -120,8 +141,15 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
             glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo1);
             glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo1+3);
 
-            glDrawArrays(GL_TRIANGLES, 0, num_vertices0);
+            glDrawArrays(GL_TRIANGLES, 0, num_vertices1);
 
+            glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[1]);
+            // Asociamos los vértices y sus normales
+            glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo2);
+            glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo2+3);
+
+            glDrawArrays(GL_TRIANGLES, 0, num_vertices2);
+            break;
         }
         case 20:{
                 modelMatrix     = glm::mat4(1.0f);
@@ -164,6 +192,7 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
             }
             break;
         }
+
         case COCHE_ID: {
             if (escena.show_car) {
 
@@ -242,36 +271,68 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
                 // Envia nuestra ModelView al Vertex Shader
                 glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
                 glDrawArrays(GL_TRIANGLES, 0, num_vertices1);
-/*
-                // RUEDA Delantera Izquierda : Cálculo de la matriz modelo
-                modelMatrix     = glm::mat4(1.0f); // matriz identidad
-
-                modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx+0.95, ty+0.45, tz-4.24));
-                modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rr), glm::vec3(1,0,0));      // en radianes
-                modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(180.0), glm::vec3(0,0,1));   // en radianes
-
-                modelViewMatrix = escena.viewMatrix * modelMatrix;
-
-                // Envia nuestra ModelView al Vertex Shader
-                glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
-
-                glDrawArrays(GL_TRIANGLES, 0, num_vertices1);
-
-                // RUEDA Trasera Derecha : Cálculo de la matriz modelo
-                modelMatrix     = glm::mat4(1.0f); // matriz identidad
-                modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx-0.95, ty+0.45, tz-4.24));
-                modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rr), glm::vec3(1,0,0));
-
-                modelViewMatrix = escena.viewMatrix * modelMatrix;
-
-                // Envia nuestra ModelView al Vertex Shader
-                glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
-
-                glDrawArrays(GL_TRIANGLES, 0, num_vertices1);
-*/
                 break;
             }
         }
+
+        case BUILDINGS_ID:{
+            modelMatrix     = glm::mat4(1.0f);
+            modelMatrix     = glm::translate(modelMatrix,glm::vec3(tx, ty, tz));
+            modelViewMatrix = escena.viewMatrix * modelMatrix;
+            glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
+
+            glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
+            glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0);
+            glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0+3);
+            glDrawArrays(GL_TRIANGLES, 0, num_vertices0);
+
+            glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
+            glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo1);
+            glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo1+3);
+            glDrawArrays(GL_TRIANGLES, 0, num_vertices1);
+
+            glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
+            glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo2);
+            glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo2+3);
+            glDrawArrays(GL_TRIANGLES, 0, num_vertices2);
+
+            glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
+            glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo3);
+            glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo3+3);
+            glDrawArrays(GL_TRIANGLES, 0, num_vertices3);
+
+            glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
+            glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo4);
+            glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo4+3);
+            glDrawArrays(GL_TRIANGLES, 0, num_vertices4);
+
+            glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
+            glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo5);
+            glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo5+3);
+            glDrawArrays(GL_TRIANGLES, 0, num_vertices5);
+
+            glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
+            glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo6);
+            glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo6+3);
+            glDrawArrays(GL_TRIANGLES, 0, num_vertices6);
+
+            glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
+            glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo7);
+            glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo7+3);
+            glDrawArrays(GL_TRIANGLES, 0, num_vertices7);
+
+            glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
+            glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo8);
+            glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo8+3);
+            glDrawArrays(GL_TRIANGLES, 0, num_vertices8);
+
+            glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
+            glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo9);
+            glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo9+3);
+            glDrawArrays(GL_TRIANGLES, 0, num_vertices9);
+            break;
+        }
+
     } // switch
 
 }
