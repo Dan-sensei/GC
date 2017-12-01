@@ -63,7 +63,7 @@ TPrimitiva::TPrimitiva(int DL, int t)
 
     tx = ty = tz = 0;
     sx = sy = sz = 1;
-    rx = ry = rz = rr = 0;
+    rx = ry = rz = rr = rry = 0;
 	switch (tipo) {
 		case CARRETERA_ID: {  // Creación de la carretera
 		    tx = ty = tz = 0;
@@ -75,7 +75,7 @@ TPrimitiva::TPrimitiva(int DL, int t)
             break;
 		}
 		case COCHE_ID: { // Creación del coche
-
+            tx = ty = tz = 0;
 		    memcpy(colores, coloresc_c, 8*sizeof(float));
 
             //************************ Cargar modelos 3ds ***********************************
@@ -229,7 +229,7 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
 
                 modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx+aux_x, ty+aux_y, tz+aux_z));
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rr), glm::vec3(1,0,0));      // en radianes
-
+                modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rry), glm::vec3(0,1,0));      // en radianes
                 modelViewMatrix = escena.viewMatrix * modelMatrix;
 
                 // Asociamos los vértices y sus normales
@@ -243,6 +243,7 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
                 modelMatrix     = glm::mat4(1.0f); // matriz identidad
                 modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx+aux_x+0.08, ty+aux_y, tz+aux_z+6.7));
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rr), glm::vec3(1,0,0));
+                //modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rry), glm::vec3(0,1,0));      // en radianes
 
                 modelViewMatrix = escena.viewMatrix * modelMatrix;
                 // Envia nuestra ModelView al Vertex Shader
@@ -253,7 +254,9 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
                 modelMatrix     = glm::mat4(1.0f); // matriz identidad
                 modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx-3.25+aux_x, ty+aux_y, tz+aux_z));
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rr), glm::vec3(1,0,0));
+                modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rry), glm::vec3(0,1,0));      // en radianes
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(180.0), glm::vec3(0,1,0));
+
                 modelViewMatrix = escena.viewMatrix * modelMatrix;
 
                 // Envia nuestra ModelView al Vertex Shader
@@ -263,8 +266,9 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
 
                 // RUEDA Trasera Izquierda : Cálculo de la matriz modelo
                 modelMatrix     = glm::mat4(1.0f); // matriz identidad
-                modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx-3.37+aux_x, ty+aux_y, tz+6.7+aux_z));
+                modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx-3.41+aux_x, ty+aux_y, tz+6.7+aux_z));
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rr), glm::vec3(1,0,0));
+                //modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rry), glm::vec3(0,1,0));      // en radianes
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(180.0), glm::vec3(0,1,0));
                 modelViewMatrix = escena.viewMatrix * modelMatrix;
 

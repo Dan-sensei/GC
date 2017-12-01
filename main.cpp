@@ -105,6 +105,12 @@ static void SpecialKey(int key, int x, int y)
             car->rr+=8;
             car->tz += 0.05;
             break;
+        case GLUT_KEY_RIGHT:
+            car -> rry-=8;
+            break;
+        case GLUT_KEY_LEFT:
+            car -> rry+=8;
+            break;
     }
 
     glutPostRedisplay();
