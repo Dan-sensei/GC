@@ -37,7 +37,7 @@ GLfloat mat_shininess_c[1] = { 100.0f };
 
 // Matriz de 4x4 = (I)
 float view_rotate_c[16] = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };
-float view_position_c[3] = { 0.0, -2.0, -9.0 };
+float view_position_c[3] = { 0.0, -4.0, -8 };
 
 float coloresc_c[2][4] = { {0.8, 0.5, 0.0, 1.0}, {0.5, 0.5, 0.5, 1.0}}; // Color del coche
 float coloresr_c[2][4] = { {0.3, 0.3, 0.3, 1.0}, {1.0, 1.0, 1.0, 1.0}}; // Color de la carretera
@@ -118,6 +118,7 @@ TPrimitiva::TPrimitiva(int DL, int t)
 
 void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
 {
+
     float aux_x, aux_y, aux_z;
     glm::mat4   modelMatrix;
     glm::mat4   modelViewMatrix;
@@ -219,9 +220,9 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
 
             if (escena.show_wheels)
             {
-            aux_x=1.58760;
-            aux_z=-5.74858;
-            aux_y=0.82241;
+                aux_x=1.58760;
+                aux_z=-5.74858;
+                aux_y=0.82241;
                 glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[1]);
 
                 // RUEDA Delantera Derecha : Cálculo de la matriz modelo
@@ -252,7 +253,7 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
 
                 // RUEDA Delantera Izquierda : Cálculo de la matriz modelo
                 modelMatrix     = glm::mat4(1.0f); // matriz identidad
-                modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx-3.25+aux_x, ty+aux_y, tz+aux_z));
+                modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx-3.32+aux_x, ty+aux_y, tz+aux_z));
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rr), glm::vec3(1,0,0));
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rry), glm::vec3(0,1,0));      // en radianes
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(180.0), glm::vec3(0,1,0));
@@ -475,13 +476,9 @@ TPrimitiva __fastcall *TEscena::GetCar(int id)
     TPrimitiva *p=NULL;
 
     for (int i=0; i<num_cars; i++)
-    {
         if (cars[i]->ID==id)
-        {
             p = cars[i];
-        }
 
-    }
     return(p);
 }
 
@@ -507,10 +504,9 @@ void __fastcall TEscena::RenderObjects(bool reflejo) {
 
 /***************************************** TEscena::Render() *****************/
 
-void __fastcall TEscena::Render()
-{
+void __fastcall TEscena::Render(){
     glm::mat4 rotateMatrix;
-
+    //std::cout<<"view_position["<< view_position[0]<<"][" << view_position[1]<<"][" << view_position[2]<< "]"<< endl;
     glClearColor(0.0, 0.7, 0.9, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -532,6 +528,10 @@ void __fastcall TEscena::Render()
     RenderCars(seleccion);
 
     glutSwapBuffers();
+}
+
+float* TEscena::getCamearInit(){
+    return view_position_c;
 }
 
 // Selecciona un objeto a través del ratón

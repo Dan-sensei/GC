@@ -190,7 +190,7 @@ public: // Métodos
 
 		void __fastcall Pick3D(int mouse_x, int mouse_y);
 
-
+        float* getCamearInit();
 };
 
 //************************************************************** Clase TGui

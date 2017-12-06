@@ -72,7 +72,8 @@
 
 #include "Objects.h"
 #include <GL\glui.h>
-
+#include <cmath>
+#include "loadjpeg.h"
 /**************************************** myGlutKeyboard() **********/
 
 void Keyboard(unsigned char Key, int x, int y)
@@ -94,22 +95,41 @@ void Keyboard(unsigned char Key, int x, int y)
 static void SpecialKey(int key, int x, int y)
 {
     TPrimitiva *car = escena.GetCar(escena.seleccion);
+    float* init;
+    init = escena.getCamearInit();
 
     switch (key)
     {
         case GLUT_KEY_UP:   // El coche avanza
             car->rr-=8;
-            car->tz -= 0.05;
+            //car->tz -= std::abs(cos(car->rry)*0.9);
+            car->tz -=0.9;
+            //escena.view_position[0]=car->tx;
+            escena.view_position[2]=init[2]-(car->tz);
+
+            //std::cout<< "viewposition[2]"<<escena.view_position[2] << std::endl;
+            /*
+            cameraPos = glm::vec3(0.0f, 20.0f, 3.0f);
+            cameraFront = glm::vec3(car->tx, car->ty, car->tz);
+            cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+            escena.viewMatrix = glm::lookAt(cameraPos, cameraFront, cameraUp);
+            gluLookAt(0,20,3,car->tx, car->ty, car->tz,0,1,0);
+            */
             break;
         case GLUT_KEY_DOWN:   // El coche retrocede
             car->rr+=8;
-            car->tz += 0.05;
+            car->tz += 0.9;
+            escena.view_position[0]=car->tx;
+            escena.view_position[2]=init[2]-(car->tz);
             break;
         case GLUT_KEY_RIGHT:
-            car -> rry-=8;
+            if((car->rry)>-16)
+                car -> rry-=8;
+            std::cout<< "RRY: "<<car->rry << std::endl;
             break;
         case GLUT_KEY_LEFT:
-            car -> rry+=8;
+            if((car->rry)<16)
+                car -> rry+=8;
             break;
     }
 
@@ -153,7 +173,7 @@ int main(int argc, char* argv[])
     // Inicializa GLUT and crea la ventana principal
     glutInit(&argc, argv);
     glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_STENCIL | GLUT_MULTISAMPLE );
-    glutInitWindowPosition( 50, 50 );
+    glutInitWindowPosition( 250, 250 );
     glutInitWindowSize( 1400, 800 );
 
     int main_window = glutCreateWindow( "CarGL V2.0 (2015) con Shaders" );
@@ -171,6 +191,17 @@ int main(int argc, char* argv[])
 
     /**** We register the idle callback with GLUI, *not* with GLUT ****/
     GLUI_Master.set_glutIdleFunc( Idle );
+
+    GLuint texturas[10];
+
+    glGenTextures(10, texturas);
+
+    unsigned char* pixeles;
+    int ancho, alto;
+    pixeles = LoadJPEG("../../Modelos/square.jpg", &ancho, &alto);
+    glBindTexture(GL_TEXTURE_2D, texturas[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, ancho, alto, 0, GL_RGB, GL_UNSIGNED_BYTE, pixeles);
+
 
     // Crea los objetos
     TPrimitiva *road = new TPrimitiva(CARRETERA_ID, CARRETERA_ID);

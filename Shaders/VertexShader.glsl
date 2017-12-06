@@ -1,7 +1,9 @@
 
 attribute vec4 a_Position;	        // in: Posición de cada vértice
 attribute vec3 a_Normal;	        // in: Normal de cada vértice
+attribute vec2 a_UV;
 
+uniform sampler2D u_TextureUnit;
 uniform mat4 u_ProjectionMatrix; 	// in: Matriz Projection
 uniform mat4 u_MVMatrix;	        // in: Matriz ModelView
 uniform mat4 u_VMatrix;             // in: Matriz View (cámara)
@@ -31,4 +33,6 @@ void main()
 	}
 	v_Color = u_Color * (ambient + diffuse + especular);
 	gl_Position = u_ProjectionMatrix * vec4(P, 1.0);
+
+	t_Color = texture2D(u_TextureUnit, a_UV);
 }
