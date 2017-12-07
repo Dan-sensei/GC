@@ -100,14 +100,14 @@ static void movement(){
     if(arraymolon['w']){
         car->rr-=8;
         //car->tz -=0.9;
-        std::cout << "Z "<<car->tz << std::endl;
-        std::cout << "X "<<car->tx << std::endl;
-        car->tz -= std::abs(cos(car->rry)*0.9);
+        std::cout << "Z "<<cos(car->ry)*0.9<< std::endl;
+        car->tz -= std::cos(car->ry)*0.9;
         if(arraymolon['a']){
+            car->ry -= 8;
             if((car->rry)>-16)
                 car -> rry-=8;
-            std::cout << "A: " << sin(car->rry) << " |RRY: "<< car->rry<<  std::endl;
-            car->tx -= std::abs(sin(car->rry)*0.9);
+            std::cout << "A: " << sin(car->ry) << " |RRY: "<< car->rry<<  std::endl;
+            car->tx -= std::abs(sin(car->ry)*0.9);
         }
 
         else if(arraymolon['d']){
