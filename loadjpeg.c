@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <malloc.h>
+#include "loadjpeg.h"
 
 typedef struct {    // Huffman coding tables
     unsigned char bits[16];
@@ -206,7 +207,7 @@ int jpeg_readmarkers() {    // read jpeg markers
                     }
                     break;
                 case 0xC1:  // Extended sequetial, Huffman
-                case 0xC2:  // Progressive, Huffman            
+                case 0xC2:  // Progressive, Huffman
                 case 0xC3:  // Lossless, Huffman
                 case 0xC5:  // Differential sequential, Huffman
                 case 0xC6:  // Differential progressive, Huffman
@@ -397,11 +398,11 @@ unsigned char *LoadJPEG(char *name,int *width,int *height) {
     memset(&jpeg_file_s,0,sizeof(jpeg_file_s));
     jpeg_file_s.file = fopen(name,"rb");
     if(!jpeg_file_s.file) return 0;
-    if(!jpeg_readmarkers()) return 0;    
+    if(!jpeg_readmarkers()) return 0;
     jpeg_file_s.data = (unsigned char*)malloc(jpeg_file_s.width * jpeg_file_s.height << 2);
     if(!jpeg_file_s.data) return 0;
     jpeg_decompress();
-    if(jpeg_file_s.num_components == 1) jpeg_gray2rgb();        
+    if(jpeg_file_s.num_components == 1) jpeg_gray2rgb();
     if(jpeg_file_s.num_components == 3) jpeg_ycbcr2rgb();
     fclose(jpeg_file_s.file);
     *width = jpeg_file_s.width;

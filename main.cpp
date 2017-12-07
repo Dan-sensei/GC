@@ -73,8 +73,9 @@
 #include "Objects.h"
 #include <GL\glui.h>
 #include <cmath>
-#include "loadjpeg.h"
+#include "loadjpeg.c"
 /**************************************** myGlutKeyboard() **********/
+bool arraymolon[256];
 
 void Keyboard(unsigned char Key, int x, int y)
 {
@@ -91,9 +92,62 @@ void Keyboard(unsigned char Key, int x, int y)
 }
 
 /**************************************** mySpecialKey() *************/
+static void movement(){
+    TPrimitiva *car = escena.GetCar(escena.seleccion);
+    float* init;
+    init = escena.getCamearInit();
 
-static void SpecialKey(int key, int x, int y)
+    if(arraymolon['w']){
+        car->rr-=8;
+        //car->tz -=0.9;
+        std::cout << "Z "<<car->tz << std::endl;
+        std::cout << "X "<<car->tx << std::endl;
+        car->tz -= std::abs(cos(car->rry)*0.9);
+        if(arraymolon['a']){
+            if((car->rry)>-16)
+                car -> rry-=8;
+            std::cout << "A: " << sin(car->rry) << " |RRY: "<< car->rry<<  std::endl;
+            car->tx -= std::abs(sin(car->rry)*0.9);
+        }
+
+        else if(arraymolon['d']){
+            if((car->rry)<16)
+                car -> rry+=8;
+            car->tx += std::abs(sin(car->rry)*0.9);
+        }
+        escena.view_position[2]=init[2]-(car->tz);
+
+    }
+    else if(arraymolon['s']){
+        car->tz += std::abs(cos(car->rry)*0.9);
+        escena.view_position[2]=init[2]-(car->tz);
+    }
+    /*
+    switch(a){
+        case 'w':
+            car->rr-=8;
+            car->tz -=0.9;
+            escena.view_position[2]=init[2]-(car->tz);
+            break;
+        case 's':
+            car->rr+=8;
+            car->tz += 0.9;
+            escena.view_position[0]=car->tx;
+            escena.view_position[2]=init[2]-(car->tz);
+            break;
+    }
+    */
+    glutPostRedisplay();
+}
+
+static void keyDown(unsigned char key, int x, int y){
+    arraymolon[key]=true;
+}
+
+static void keyUp(unsigned char key, int x, int y)
 {
+    arraymolon[key]=false;
+    /*
     TPrimitiva *car = escena.GetCar(escena.seleccion);
     float* init;
     init = escena.getCamearInit();
@@ -102,9 +156,10 @@ static void SpecialKey(int key, int x, int y)
     {
         case GLUT_KEY_UP:   // El coche avanza
             car->rr-=8;
-            //car->tz -= std::abs(cos(car->rry)*0.9);
+            car->tz -= std::abs(cos(car->rry)*0.9);
             car->tz -=0.9;
             //escena.view_position[0]=car->tx;
+
             escena.view_position[2]=init[2]-(car->tz);
 
             //std::cout<< "viewposition[2]"<<escena.view_position[2] << std::endl;
@@ -114,7 +169,7 @@ static void SpecialKey(int key, int x, int y)
             cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
             escena.viewMatrix = glm::lookAt(cameraPos, cameraFront, cameraUp);
             gluLookAt(0,20,3,car->tx, car->ty, car->tz,0,1,0);
-            */
+
             break;
         case GLUT_KEY_DOWN:   // El coche retrocede
             car->rr+=8;
@@ -132,9 +187,11 @@ static void SpecialKey(int key, int x, int y)
                 car -> rry+=8;
             break;
     }
+    */
 
-    glutPostRedisplay();
 }
+
+
 
 /***************************************** myGlutMenu() ***********/
 
@@ -151,6 +208,7 @@ void Mouse(int button, int button_state, int x, int y )
 void Render()
 {
     escena.Render();
+    movement();
 }
 
 void Idle()
@@ -185,23 +243,29 @@ int main(int argc, char* argv[])
     glutDisplayFunc( Render );
     GLUI_Master.set_glutReshapeFunc( Reshape );
     GLUI_Master.set_glutKeyboardFunc( Keyboard );
-    GLUI_Master.set_glutSpecialFunc( SpecialKey );
+    //GLUI_Master.set_glutSpecialFunc( Keys );
+
+    glutKeyboardFunc(keyDown);
+    glutKeyboardUpFunc(keyUp);
+
     GLUI_Master.set_glutMouseFunc( Mouse );
     glutMotionFunc( Motion );
 
     /**** We register the idle callback with GLUI, *not* with GLUT ****/
     GLUI_Master.set_glutIdleFunc( Idle );
-
+/*
     GLuint texturas[10];
 
     glGenTextures(10, texturas);
 
     unsigned char* pixeles;
     int ancho, alto;
-    pixeles = LoadJPEG("../../Modelos/square.jpg", &ancho, &alto);
+    ancho = alto = 0;
+
+    pixeles = LoadJPEG("./../../Modelos/square.jpg", &ancho, &alto);
     glBindTexture(GL_TEXTURE_2D, texturas[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, 3, ancho, alto, 0, GL_RGB, GL_UNSIGNED_BYTE, pixeles);
-
+*/
 
     // Crea los objetos
     TPrimitiva *road = new TPrimitiva(CARRETERA_ID, CARRETERA_ID);
