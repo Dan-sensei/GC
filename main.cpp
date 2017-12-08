@@ -73,19 +73,17 @@
 #include "Objects.h"
 #include <GL\glui.h>
 #include <cmath>
-#include "loadjpeg.c"
+
+#define VELOZ 0.9
 /**************************************** myGlutKeyboard() **********/
 bool arraymolon[256];
 
-void Keyboard(unsigned char Key, int x, int y)
-{
-    switch(Key)
-    {
+void Keyboard(unsigned char Key, int x, int y){
+    switch(Key){
         case 27:
         case 'q':
             exit(0);
             break;
-
     }
 
     glutPostRedisplay();
@@ -98,45 +96,30 @@ static void movement(){
     init = escena.getCamearInit();
 
     if(arraymolon['w']){
-        car->rr-=8;
-        //car->tz -=0.9;
-        std::cout << "Z "<<cos(car->ry)*0.9<< std::endl;
-        car->tz -= std::cos(car->ry)*0.9;
-        if(arraymolon['a']){
-            car->ry -= 8;
-            if((car->rry)>-16)
-                car -> rry-=8;
-            std::cout << "A: " << sin(car->ry) << " |RRY: "<< car->rry<<  std::endl;
-            car->tx -= std::abs(sin(car->ry)*0.9);
-        }
-
-        else if(arraymolon['d']){
-            if((car->rry)<16)
-                car -> rry+=8;
-            car->tx += std::abs(sin(car->rry)*0.9);
-        }
-        escena.view_position[2]=init[2]-(car->tz);
-
+        car->rr-=20;
+        //car->tz -= 0.9;
+        car->tz -= std::cos(glm::radians(car->ry))*VELOZ;
+        car->tx -= std::sin(glm::radians(car->ry))*VELOZ;
     }
     else if(arraymolon['s']){
-        car->tz += std::abs(cos(car->rry)*0.9);
-        escena.view_position[2]=init[2]-(car->tz);
+        car->rr+=20;
+        car->tz += std::cos(glm::radians(car->ry))*VELOZ;
+        car->tx += std::sin(glm::radians(car->ry))*VELOZ;
     }
-    /*
-    switch(a){
-        case 'w':
-            car->rr-=8;
-            car->tz -=0.9;
-            escena.view_position[2]=init[2]-(car->tz);
-            break;
-        case 's':
-            car->rr+=8;
-            car->tz += 0.9;
-            escena.view_position[0]=car->tx;
-            escena.view_position[2]=init[2]-(car->tz);
-            break;
+
+    escena.view_position[0]=init[0]-(car->tx);
+    escena.view_position[2]=init[2]-(car->tz);
+
+    if(arraymolon['a'] && (arraymolon['s'] || arraymolon['w'])){
+        car->ry += 5;
+            if((car->rry)>-16)
+                car -> rry-=8;
     }
-    */
+    else if(arraymolon['d'] && (arraymolon['s'] || arraymolon['w'])){
+        car->ry -= 5;
+        if((car->rry)<16)
+            car -> rry+=8;
+    }
     glutPostRedisplay();
 }
 
@@ -144,51 +127,8 @@ static void keyDown(unsigned char key, int x, int y){
     arraymolon[key]=true;
 }
 
-static void keyUp(unsigned char key, int x, int y)
-{
+static void keyUp(unsigned char key, int x, int y){
     arraymolon[key]=false;
-    /*
-    TPrimitiva *car = escena.GetCar(escena.seleccion);
-    float* init;
-    init = escena.getCamearInit();
-
-    switch (key)
-    {
-        case GLUT_KEY_UP:   // El coche avanza
-            car->rr-=8;
-            car->tz -= std::abs(cos(car->rry)*0.9);
-            car->tz -=0.9;
-            //escena.view_position[0]=car->tx;
-
-            escena.view_position[2]=init[2]-(car->tz);
-
-            //std::cout<< "viewposition[2]"<<escena.view_position[2] << std::endl;
-            /*
-            cameraPos = glm::vec3(0.0f, 20.0f, 3.0f);
-            cameraFront = glm::vec3(car->tx, car->ty, car->tz);
-            cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-            escena.viewMatrix = glm::lookAt(cameraPos, cameraFront, cameraUp);
-            gluLookAt(0,20,3,car->tx, car->ty, car->tz,0,1,0);
-
-            break;
-        case GLUT_KEY_DOWN:   // El coche retrocede
-            car->rr+=8;
-            car->tz += 0.9;
-            escena.view_position[0]=car->tx;
-            escena.view_position[2]=init[2]-(car->tz);
-            break;
-        case GLUT_KEY_RIGHT:
-            if((car->rry)>-16)
-                car -> rry-=8;
-            std::cout<< "RRY: "<<car->rry << std::endl;
-            break;
-        case GLUT_KEY_LEFT:
-            if((car->rry)<16)
-                car -> rry+=8;
-            break;
-    }
-    */
-
 }
 
 
@@ -253,19 +193,9 @@ int main(int argc, char* argv[])
 
     /**** We register the idle callback with GLUI, *not* with GLUT ****/
     GLUI_Master.set_glutIdleFunc( Idle );
-/*
-    GLuint texturas[10];
 
-    glGenTextures(10, texturas);
 
-    unsigned char* pixeles;
-    int ancho, alto;
-    ancho = alto = 0;
 
-    pixeles = LoadJPEG("./../../Modelos/square.jpg", &ancho, &alto);
-    glBindTexture(GL_TEXTURE_2D, texturas[0]);
-    glTexImage2D(GL_TEXTURE_2D, 0, 3, ancho, alto, 0, GL_RGB, GL_UNSIGNED_BYTE, pixeles);
-*/
 
     // Crea los objetos
     TPrimitiva *road = new TPrimitiva(CARRETERA_ID, CARRETERA_ID);

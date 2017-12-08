@@ -16,6 +16,8 @@
 #include "Objects.h"
 #include <GL/glui.h>
 #include <iostream>
+#include <math.h>
+#include "loadjpeg.c"
 
 #include "load3ds.c"
 using namespace std;
@@ -37,7 +39,7 @@ GLfloat mat_shininess_c[1] = { 100.0f };
 
 // Matriz de 4x4 = (I)
 float view_rotate_c[16] = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };
-float view_position_c[3] = { 0.0, -4.0, -8 };
+float view_position_c[3] = { 0.0, -6.0, -12 };
 
 float coloresc_c[2][4] = { {0.8, 0.5, 0.0, 1.0}, {0.5, 0.5, 0.5, 1.0}}; // Color del coche
 float coloresr_c[2][4] = { {0.3, 0.3, 0.3, 1.0}, {1.0, 1.0, 1.0, 1.0}}; // Color de la carretera
@@ -64,6 +66,7 @@ TPrimitiva::TPrimitiva(int DL, int t)
     tx = ty = tz = 0;
     sx = sy = sz = 1;
     rx = ry = rz = rr = rry = 0;
+
 	switch (tipo) {
 		case CARRETERA_ID: {  // Creación de la carretera
 		    tx = ty = tz = 0;
@@ -76,6 +79,7 @@ TPrimitiva::TPrimitiva(int DL, int t)
 		}
 		case COCHE_ID: { // Creación del coche
             tx = ty = tz = 0;
+
 		    memcpy(colores, coloresc_c, 8*sizeof(float));
 
             //************************ Cargar modelos 3ds ***********************************
@@ -220,17 +224,17 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
 
             if (escena.show_wheels)
             {
-                aux_x=1.58760;
-                aux_z=-5.74858;
-                aux_y=0.82241;
+
                 glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[1]);
 
                 // RUEDA Delantera Derecha : Cálculo de la matriz modelo
                 modelMatrix     = glm::mat4(1.0f); // matriz identidad
 
-                modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx+aux_x, ty+aux_y, tz+aux_z));
+                modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx, ty+0.73, tz));
+                modelMatrix     = glm::translate(modelMatrix, glm::vec3(cos(ry*M_PI/180)*1.65 -sin(ry*M_PI/180)*6.45, 0, -cos(ry*M_PI/180)*6.45 - sin(ry*M_PI/180)*1.65));
+                modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(ry), glm::vec3(0,1,0));      // en radianes
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rr), glm::vec3(1,0,0));      // en radianes
-                modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rry), glm::vec3(0,1,0));      // en radianes
+
                 modelViewMatrix = escena.viewMatrix * modelMatrix;
 
                 // Asociamos los vértices y sus normales
@@ -242,20 +246,26 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
 
                 // RUEDA Trasera Derecha : Cálculo de la matriz modelo
                 modelMatrix     = glm::mat4(1.0f); // matriz identidad
-                modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx+aux_x+0.08, ty+aux_y, tz+aux_z+6.7));
+
+                modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx, ty+0.73, tz));
+                modelMatrix     = glm::translate(modelMatrix, glm::vec3(cos(ry*M_PI/180)*1.75, 0, -sin(ry*M_PI/180)*1.75));
+
+                modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(ry), glm::vec3(0,1,0));      // en radianes
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rr), glm::vec3(1,0,0));
-                //modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rry), glm::vec3(0,1,0));      // en radianes
+
 
                 modelViewMatrix = escena.viewMatrix * modelMatrix;
                 // Envia nuestra ModelView al Vertex Shader
                 glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
+
                 glDrawArrays(GL_TRIANGLES, 0, num_vertices1);
 
                 // RUEDA Delantera Izquierda : Cálculo de la matriz modelo
                 modelMatrix     = glm::mat4(1.0f); // matriz identidad
-                modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx-3.32+aux_x, ty+aux_y, tz+aux_z));
+                modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx, ty+0.73, tz));
+                modelMatrix     = glm::translate(modelMatrix, glm::vec3(-cos(ry*M_PI/180)*1.65 -sin(ry*M_PI/180)*6.45, 0, -cos(ry*M_PI/180)*6.45 + sin(ry*M_PI/180)*1.65));
+                modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(ry), glm::vec3(0,1,0));      // en radianes
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rr), glm::vec3(1,0,0));
-                modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rry), glm::vec3(0,1,0));      // en radianes
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(180.0), glm::vec3(0,1,0));
 
                 modelViewMatrix = escena.viewMatrix * modelMatrix;
@@ -267,15 +277,18 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
 
                 // RUEDA Trasera Izquierda : Cálculo de la matriz modelo
                 modelMatrix     = glm::mat4(1.0f); // matriz identidad
-                modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx-3.41+aux_x, ty+aux_y, tz+6.7+aux_z));
+                modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx, ty+0.73, tz));
+                modelMatrix     = glm::translate(modelMatrix, glm::vec3(-cos(ry*M_PI/180)*1.75, 0, sin(ry*M_PI/180)*1.75));
+                modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(ry), glm::vec3(0,1,0));      // en radianes
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rr), glm::vec3(1,0,0));
-                //modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rry), glm::vec3(0,1,0));      // en radianes
+
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(180.0), glm::vec3(0,1,0));
                 modelViewMatrix = escena.viewMatrix * modelMatrix;
 
                 // Envia nuestra ModelView al Vertex Shader
                 glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
                 glDrawArrays(GL_TRIANGLES, 0, num_vertices1);
+
                 break;
             }
         }
@@ -450,8 +463,28 @@ void __fastcall TEscena::InitGL()
     xy_aspect = (float)tw / (float)th;
     projectionMatrix = glm::perspective(45.0f, xy_aspect, 0.1f, 1000.0f);
     glUniformMatrix4fv(uProjectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+
+    LoadTexture("./../../Modelos/square.jpg",0);
+
 }
 
+void TEscena::LoadTexture(char* path, unsigned char p){
+
+    glGenTextures(10, escena.texturas);
+
+    unsigned char* pixeles;
+    int ancho, alto;
+    ancho = alto = 0;
+
+    pixeles = LoadJPEG(path, &ancho, &alto);
+    glBindTexture(GL_TEXTURE_2D, escena.texturas[p]);
+    glTexImage2D(GL_TEXTURE_2D, 0, 3, ancho, alto, 0, GL_RGB, GL_UNSIGNED_BYTE, pixeles);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    free(pixeles);
+}
 
 /************************** TEscena::AddCar(TPrimitiva *car) *****************/
 

@@ -175,6 +175,8 @@ public: // Atributos de la clase
         GLfloat view_rotate[16];
         float   scale;
 
+        GLuint texturas[10];
+
 public: // Métodos
 		TEscena();
 
@@ -191,6 +193,7 @@ public: // Métodos
 		void __fastcall Pick3D(int mouse_x, int mouse_y);
 
         float* getCamearInit();
+        void LoadTexture(char* path, unsigned char p);
 };
 
 //************************************************************** Clase TGui
