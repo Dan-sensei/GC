@@ -396,7 +396,7 @@
 	<GL\glui.h>
 	<cmath>
 
-1512692222 d:\documentos\github\gc\objects.h
+1512693819 d:\documentos\github\gc\objects.h
 	"Shader.h"
 	"Program.h"
 	<GL/glui.h>
@@ -415,11 +415,12 @@
 	<vector>
 	<GL/glew.h>
 
-1512690592 source:d:\documentos\github\gc\objects.cpp
+1512693784 source:d:\documentos\github\gc\objects.cpp
 	"Objects.h"
 	<GL/glui.h>
 	<iostream>
 	<math.h>
+	"loadjpeg.c"
 	"load3ds.c"
 
 1510162871 d:\documentos\github\gc\load3ds.c

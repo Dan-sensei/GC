@@ -464,7 +464,7 @@ void __fastcall TEscena::InitGL()
     projectionMatrix = glm::perspective(45.0f, xy_aspect, 0.1f, 1000.0f);
     glUniformMatrix4fv(uProjectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 
-    LoadTexture("./../../Modelos/square.jpg",0);
+    //LoadTexture("./../../Modelos/square.jpg",0);
 
 }
 
