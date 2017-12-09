@@ -53,14 +53,17 @@
 #define POSITION_COMPONENT_COUNT    3
 #define NORMAL_COMPONENT_COUNT      3
 #define UV_COMPONENT_COUNT          2
+
 // Cálculo del stride (3+3+2)*4 = 8*4 = 32
 #define STRIDE                      32
 
 // Nombre de los attributes
 #define A_POSITION  "a_Position"
 #define A_NORMAL    "a_Normal"
+#define A_UV        "a_UV"
 
 // Nombre de los uniforms
+#define U_TEXTUREUNIT           "u_TextureUnit"
 #define U_PROJECTIONMATRIX      "u_ProjectionMatrix"
 #define U_MVMATRIX              "u_MVMatrix"
 #define U_VMATRIX               "u_VMatrix"
@@ -131,6 +134,9 @@ public: // Atributos de la clase
         // Handles de los attributes y uniforms
         int aPositionLocation;
         int aNormalLocation;
+        int aUVLocation;
+
+        int uTextureUnitLocation;
         int uProjectionMatrixLocation;
         int uMVMatrixLocation;
 		int uVMatrixLocation;
@@ -173,6 +179,8 @@ public: // Atributos de la clase
 
         GLfloat view_position[3];
         GLfloat view_rotate[16];
+        glm::mat4 vista;
+
         float   scale;
 
         GLuint texturas[10];

@@ -1,7 +1,7 @@
 
 attribute vec4 a_Position;	        // in: Posición de cada vértice
 attribute vec3 a_Normal;	        // in: Normal de cada vértice
-attribute vec2 a_UV;
+attribute vec2 a_UV;                // in: Coordenadas UV de mapeado de textura
 
 uniform sampler2D u_TextureUnit;
 uniform mat4 u_ProjectionMatrix; 	// in: Matriz Projection
@@ -23,7 +23,7 @@ void main()
 
 	float ambient = 0.15;                               // (15% de int. ambiente)
 	float diffuse = 0.0;
-    float especular=0;
+    float especular=0.0;
 
 	if (u_Luz0>0) {                                     // Si la luz 0 está encendida se calcula la intesidad difusa de L
         diffuse = max(dot(N, L), 0.0);		            // Cálculo de la int. difusa
@@ -31,8 +31,9 @@ void main()
         float attenuation = 80.0/(0.25+(0.01*d)+(0.003*d*d));
         diffuse = diffuse*attenuation;
 	}
-	v_Color = u_Color * (ambient + diffuse + especular);
-	gl_Position = u_ProjectionMatrix * vec4(P, 1.0);
+	vec4 t_Color = texture2D(u_TextureUnit, a_UV);
+	v_Color =  (ambient + diffuse + especular)*t_Color;
 
-	//t_Color = texture2D(u_TextureUnit, a_UV);
+
+	gl_Position = u_ProjectionMatrix * vec4(P, 1.0);
 }

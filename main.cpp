@@ -74,9 +74,12 @@
 #include <GL\glui.h>
 #include <cmath>
 
-#define VELOZ 0.9
+#define GIRO 5
+#define VMAX 2
 /**************************************** myGlutKeyboard() **********/
 bool arraymolon[256];
+float v=0;
+float a=5;
 
 void Keyboard(unsigned char Key, int x, int y){
     switch(Key){
@@ -94,32 +97,59 @@ static void movement(){
     TPrimitiva *car = escena.GetCar(escena.seleccion);
     float* init;
     init = escena.getCamearInit();
-
-    if(arraymolon['w']){
+    //std::cout << "v = " << v << std::endl;
+    if(!arraymolon['s'] && (arraymolon['w'] || v>0)){
         car->rr-=20;
-        //car->tz -= 0.9;
-        car->tz -= std::cos(glm::radians(car->ry))*VELOZ;
-        car->tx -= std::sin(glm::radians(car->ry))*VELOZ;
+
+        if(arraymolon['w'] &&  v<0)
+            v += a*0.01;
+        else if(arraymolon['w'] && v<VMAX)
+            v += a*0.005;
+
+        car->tz -= std::cos(glm::radians(car->ry))*v;
+        car->tx -= std::sin(glm::radians(car->ry))*v;
     }
-    else if(arraymolon['s']){
+    if(!arraymolon['w'] && (arraymolon['s'] || v<0)){
         car->rr+=20;
-        car->tz += std::cos(glm::radians(car->ry))*VELOZ;
-        car->tx += std::sin(glm::radians(car->ry))*VELOZ;
-    }
 
-    escena.view_position[0]=init[0]-(car->tx);
-    escena.view_position[2]=init[2]-(car->tz);
+        if(arraymolon['s'] &&  v>0)
+            v -= a*0.01;
+        else if(arraymolon['s'] && v>-VMAX)
+            v -= a*0.005;
 
-    if(arraymolon['a'] && (arraymolon['s'] || arraymolon['w'])){
-        car->ry += 5;
-            if((car->rry)>-16)
-                car -> rry-=8;
+        car->tz -= std::cos(glm::radians(car->ry))*v;
+        car->tx -= std::sin(glm::radians(car->ry))*v;
     }
-    else if(arraymolon['d'] && (arraymolon['s'] || arraymolon['w'])){
-        car->ry -= 5;
+    //std::cout << "RRY: " << car->rry << std::endl;
+    if(arraymolon['a'] && (v>0.01 ||v<-0.01)){
+        if((car->rry)>-16)
+            car -> rry-=8;
+
+        car->ry += GIRO*(v/VMAX);
+    }
+    else if(arraymolon['d'] && (v>0.01 ||v<-0.01)){
         if((car->rry)<16)
             car -> rry+=8;
+
+        car->ry -= GIRO*(v/VMAX);
     }
+
+    if(!arraymolon['w'] && !arraymolon['s'] && v!=0){
+        if(v>0.001)
+            v -= a*0.001;
+        else if(v<-0.001)
+            v += a*0.001;
+
+        if(v>-0.001 && v<0.001) v=0;
+    }
+
+    float x = car->tx - init[0]*cos(glm::radians(car->ry)) + sin(glm::radians(car->ry))*init[2];
+    float z = car->tz + cos(glm::radians(car->ry))*init[2] + sin(glm::radians(car->ry))*init[0];
+
+    escena.vista      = glm::lookAt(glm::vec3(x,init[1],z), glm::vec3(car->tx,car->ty,car->tz), glm::vec3(0,1,0));
+    //escena.view_position[0]=init[0]-(car->tx);
+    //escena.view_position[2]=init[2]-(car->tz);
+
     glutPostRedisplay();
 }
 
@@ -130,8 +160,6 @@ static void keyDown(unsigned char key, int x, int y){
 static void keyUp(unsigned char key, int x, int y){
     arraymolon[key]=false;
 }
-
-
 
 /***************************************** myGlutMenu() ***********/
 
@@ -193,9 +221,6 @@ int main(int argc, char* argv[])
 
     /**** We register the idle callback with GLUI, *not* with GLUT ****/
     GLUI_Master.set_glutIdleFunc( Idle );
-
-
-
 
     // Crea los objetos
     TPrimitiva *road = new TPrimitiva(CARRETERA_ID, CARRETERA_ID);
