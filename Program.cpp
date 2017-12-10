@@ -1,5 +1,5 @@
 #include "Program.h"
-#include <iostream>
+
 Program::Program(const std::vector<GLuint> shaders) :
     programID(0)
 {
@@ -56,7 +56,6 @@ GLuint Program::ReturnProgramID() const
 //this function return the handle of arrribute variable
 GLint Program::attrib(const GLchar* attribName) const
 {
-    std::cout << "ATRIBUTOOO  " <<attribName<<std::endl;
     if(!attribName)
         throw std::runtime_error("attribName was NULL");
 

@@ -3,7 +3,6 @@ attribute vec4 a_Position;	        // in: Posición de cada vértice
 attribute vec3 a_Normal;	        // in: Normal de cada vértice
 attribute vec2 a_UV;                // in: Coordenadas UV de mapeado de textura
 
-uniform sampler2D u_TextureUnit;
 uniform mat4 u_ProjectionMatrix; 	// in: Matriz Projection
 uniform mat4 u_MVMatrix;	        // in: Matriz ModelView
 uniform mat4 u_VMatrix;             // in: Matriz View (cámara)
@@ -11,7 +10,7 @@ uniform vec4 u_Color;		        // in: Color del objeto
 uniform int  u_Luz0;                // in: Indica si la luz 0 está encedida
 
 varying vec4 v_Color;		        // out: Color al fragment shader
-
+varying vec2 a_UV2;
 void main()
 {
     vec4 LightPos = u_VMatrix*vec4( -100, 100, 50, 1);		// Posición de la luz [fija]
@@ -31,8 +30,9 @@ void main()
         float attenuation = 80.0/(0.25+(0.01*d)+(0.003*d*d));
         diffuse = diffuse*attenuation;
 	}
-	vec4 t_Color = texture2D(u_TextureUnit, a_UV);
-	v_Color =  (ambient + diffuse + especular)*t_Color;
+	a_UV2 = a_UV;
+	//vec4 t_Color = texture2D(u_TextureUnit, a_UV);
+	v_Color =  (ambient + diffuse + especular);
 
 
 	gl_Position = u_ProjectionMatrix * vec4(P, 1.0);

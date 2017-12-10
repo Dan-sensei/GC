@@ -15,14 +15,6 @@
 				<Compiler>
 					<Add option="-g" />
 				</Compiler>
-				<Linker>
-					<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/glew32s.lib" />
-					<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/glew32.lib" />
-					<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libglui32.a" />
-					<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/glut32.lib" />
-					<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libglu32.a" />
-					<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libopengl32.a" />
-				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/CarGL" prefix_auto="1" extension_auto="1" />
@@ -39,12 +31,12 @@
 			</Target>
 		</Build>
 		<Linker>
-			<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/glew32s.lib" />
-			<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/glew32.lib" />
-			<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libglui32.a" />
-			<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/glut32.lib" />
-			<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libglu32.a" />
-			<Add library="C:/Program Files (x86)/CodeBlocks/MinGW/lib/libopengl32.a" />
+			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\glew32s.lib" />
+			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\glew32.lib" />
+			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libglui32.a" />
+			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\glut32.lib" />
+			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libglu32.a" />
+			<Add library="C:\Program Files (x86)\CodeBlocks\MinGW\lib\libopengl32.a" />
 		</Linker>
 		<Unit filename="Objects.cpp" />
 		<Unit filename="Objects.h" />

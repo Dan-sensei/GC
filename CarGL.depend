@@ -349,30 +349,37 @@
 1445366915 source:c:\users\datri\onedrive\universidad\gc\cargl.v2.1 (shaders)\shader.cpp
 	"Shader.h"
 
-1445335940 source:c:\users\datri\documents\github\gc\program.cpp
+1445335940 source:d:\onedrive\universidad\gc\cargl.v2.1 (shaders)\program.cpp
 	"Program.h"
 
-1431215812 c:\users\datri\documents\github\gc\program.h
+1431215812 d:\onedrive\universidad\gc\cargl.v2.1 (shaders)\program.h
 	<stdexcept>
 	<vector>
 	<GL/glew.h>
 
-1510142126 source:c:\users\datri\documents\github\gc\shader.cpp
+1445363315 source:d:\onedrive\universidad\gc\cargl.v2.1 (shaders)\shader.cpp
 	"Shader.h"
 
-1431215812 c:\users\datri\documents\github\gc\shader.h
+1431215812 d:\onedrive\universidad\gc\cargl.v2.1 (shaders)\shader.h
 	<GL/glew.h>
 	<iostream>
 	<fstream>
 	<stdexcept>
 
-1512644397 source:c:\users\datri\documents\github\gc\main.cpp
+1445335940 source:d:\escritorio\cargl.v2.1 (shaders)\program.cpp
+	"Program.h"
+
+1431215812 d:\escritorio\cargl.v2.1 (shaders)\program.h
+	<stdexcept>
+	<vector>
+	<GL/glew.h>
+
+1512841383 source:d:\escritorio\cargl.v2.1 (shaders)\main.cpp
 	"Objects.h"
 	<GL\glui.h>
 	<cmath>
-	"loadjpeg.c"
 
-1512634470 c:\users\datri\documents\github\gc\objects.h
+1512834835 d:\escritorio\cargl.v2.1 (shaders)\objects.h
 	"Shader.h"
 	"Program.h"
 	<GL/glui.h>
@@ -380,23 +387,21 @@
 	<glm/gtc/matrix_transform.hpp>
 	<glm/gtc/type_ptr.hpp>
 
-1512638255 source:c:\users\datri\documents\github\gc\objects.cpp
-	"Objects.h"
-	<GL/glui.h>
+1510162871 d:\escritorio\cargl.v2.1 (shaders)\shader.h
+	<GL/glew.h>
 	<iostream>
-	"load3ds.c"
+	<fstream>
+	<stdexcept>
 
-1352020667 c:\users\datri\documents\github\gc\load3ds.c
-	<math.h>
-	<stdio.h>
-	<malloc.h>
+1510162871 source:d:\escritorio\cargl.v2.1 (shaders)\shader.cpp
+	"Shader.h"
 
-1512841383 source:d:\documentos\github\gc\main.cpp
+1512866674 source:d:\documentos\github\gc\main.cpp
 	"Objects.h"
 	<GL\glui.h>
 	<cmath>
 
-1512834835 d:\documentos\github\gc\objects.h
+1512869433 d:\documentos\github\gc\objects.h
 	"Shader.h"
 	"Program.h"
 	<GL/glui.h>
@@ -410,12 +415,12 @@
 	<fstream>
 	<stdexcept>
 
-1510162871 d:\documentos\github\gc\program.h
+1431215812 d:\documentos\github\gc\program.h
 	<stdexcept>
 	<vector>
 	<GL/glew.h>
 
-1512840831 source:d:\documentos\github\gc\objects.cpp
+1512866966 source:d:\documentos\github\gc\objects.cpp
 	"Objects.h"
 	<GL/glui.h>
 	<iostream>
@@ -423,30 +428,18 @@
 	"loadjpeg.c"
 	"load3ds.c"
 
-1510162871 d:\documentos\github\gc\load3ds.c
+1512867028 d:\documentos\github\gc\loadjpeg.c
+	<stdio.h>
+	<malloc.h>
+
+1512866949 d:\documentos\github\gc\load3ds.c
 	<math.h>
 	<stdio.h>
 	<malloc.h>
 
-1512757344 source:d:\documentos\github\gc\program.cpp
+1445335940 source:d:\documentos\github\gc\program.cpp
 	"Program.h"
-	<iostream>
 
 1510162871 source:d:\documentos\github\gc\shader.cpp
 	"Shader.h"
-
-1510162871 d:\documentos\github\gc\loadjpeg.h
-
-1019226156 c:\users\datri\documents\github\gc\loadjpeg.h
-
-1512634943 c:\users\datri\documents\github\gc\loadjpeg.c
-	<stdio.h>
-	<malloc.h>
-	"loadjpeg.h"
-
-1512763202 d:\documentos\github\gc\loadjpeg.c
-	<stdio.h>
-	<malloc.h>
-	"loadjpeg.h"
-	<iostream>
 

@@ -7,8 +7,6 @@
 
 #include <stdio.h>
 #include <malloc.h>
-#include "loadjpeg.h"
-#include <iostream>
 
 typedef struct {    // Huffman coding tables
     unsigned char bits[16];
@@ -395,19 +393,17 @@ void jpeg_gray2rgb() {  // grayscale image to RGB
     }
 }
 
-unsigned char *LoadJPEG(char *name,int *width,int *height) {
+unsigned char *LoadJPEG(const char *name,int *width,int *height) {
     memset(&jpeg_file_s,0,sizeof(jpeg_file_s));
     jpeg_file_s.file = fopen(name,"rb");
     if(!jpeg_file_s.file) return 0;
     if(!jpeg_readmarkers()) return 0;
-    std::cout<<"UEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
     jpeg_file_s.data = (unsigned char*)malloc(jpeg_file_s.width * jpeg_file_s.height << 2);
     if(!jpeg_file_s.data) return 0;
     jpeg_decompress();
     if(jpeg_file_s.num_components == 1) jpeg_gray2rgb();
     if(jpeg_file_s.num_components == 3) jpeg_ycbcr2rgb();
     fclose(jpeg_file_s.file);
-
     *width = jpeg_file_s.width;
     *height = jpeg_file_s.height;
     return jpeg_file_s.data;

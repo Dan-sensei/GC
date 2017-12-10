@@ -48,6 +48,7 @@
 #define RESET_ID             400
 
 #define SEL_ID               500
+#define SEL_ID2              501
 
 // Datos del formato 3DS (x, y, z, A, B, C, u, v)
 #define POSITION_COMPONENT_COUNT    3
@@ -147,6 +148,7 @@ public: // Atributos de la clase
         glm::mat4 viewMatrix;       // Almacena la matriz de la vista (cámara)
 
 		Program  *shaderProgram;    // Almacena el programa de OpenGL (ShaderProgram)
+        Program  *shaderProgramPick;
 
         // Vectores de luces y materiales
         GLfloat light0_ambient[4];
@@ -201,7 +203,9 @@ public: // Métodos
 		void __fastcall Pick3D(int mouse_x, int mouse_y);
 
         float* getCamearInit();
-        void LoadTexture(char* path, unsigned char p);
+        void LoadTexture(const char* path, unsigned char p);
+        void renderSelection(void);
+
 };
 
 //************************************************************** Clase TGui
@@ -212,7 +216,7 @@ public:
         int             window_id;
 
         // live variables usadas por GLUI
-        int             sel;
+        int             sel, sel2;
         int             enable_panel2;
         int             light0_enabled;
         int             light1_enabled;

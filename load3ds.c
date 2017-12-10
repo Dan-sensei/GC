@@ -379,7 +379,7 @@ static float *create_mesh(mesh_t *mesh,int *num_vertex) {
 	return vertex;
 }
 
-float *Load3DS(char *name,int *num_vertex) {
+float *Load3DS(const char *name,int *num_vertex) {
 	FILE *file;
 	mesh_t *mesh;
 	float *vertex;
