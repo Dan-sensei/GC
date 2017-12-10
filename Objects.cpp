@@ -126,6 +126,7 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
     glm::mat4   modelViewMatrix;
     glActiveTexture(GL_TEXTURE0);
     glUniform1f(escena.uTextureUnitLocation, 0);
+
     switch (tipo) {
         /*
         case LIGHTS_ID:{
@@ -612,6 +613,7 @@ float* TEscena::getCamearInit(){
 // Selecciona un objeto a través del ratón
 void __fastcall TEscena::Pick3D(int mouse_x, int mouse_y)
 {
+    /*
     unsigned char res[4];
     GLint viewport[4];
 
@@ -627,8 +629,9 @@ void __fastcall TEscena::Pick3D(int mouse_x, int mouse_y)
         case 4: printf("Picked blue\n"); break;
         default:printf("Res: %d\n", res[0]);
     }
+    */
 }
-
+/*
 void TEscena::renderSelection(void) {
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -641,12 +644,9 @@ void TEscena::renderSelection(void) {
     // use the selection shader
 
     Shader shader;
-
     std::vector<GLuint> shaders;
     shaders.push_back(shader.LoadShader("../../Shaders/VertexShaderPick.glsl", GL_VERTEX_SHADER));
-    //std::cout << "Vertex Shader: " << shader.ReturnShaderID() << std::endl;
     shaders.push_back(shader.LoadShader("../../Shaders/FragmentShaderPick.glsl", GL_FRAGMENT_SHADER));
-    //std::cout << "Fragment Shader: " << shader.ReturnShaderID() << std::endl;
     shaderProgramPick = new Program(shaders);
 
     glUseProgram(shaderProgram->ReturnProgramID());
@@ -654,7 +654,7 @@ void TEscena::renderSelection(void) {
     //perform the geometric transformations to place the first pawn
 
     // set the uniform with the appropriate color code
-    glProgramUniform1i(selectionProgramID, codeVarLocation, 1);
+    glProgramUniform1i(shaderProgram->ReturnProgramID(), GLint 1, 1);
     // draw first pawn
     ...
 
@@ -666,6 +666,7 @@ void TEscena::renderSelection(void) {
     // restore clear color if needed
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 }
+*/
 //************************************************************** Clase TGui
 
 TGui::TGui()
