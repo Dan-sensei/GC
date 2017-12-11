@@ -1,10 +1,7 @@
-#version 330
-
-uniform int code;
-
-out vec4 outputF;
+precision mediump float;	// Precisión media
+varying vec4 v_Color;
 
 void main()
 {
-    outputF = vec4(code/255.0, 0, 0, 0);
+    gl_FragColor = v_Color;
 }

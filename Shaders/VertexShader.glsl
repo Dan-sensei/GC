@@ -6,14 +6,16 @@ attribute vec2 a_UV;                // in: Coordenadas UV de mapeado de textura
 uniform mat4 u_ProjectionMatrix; 	// in: Matriz Projection
 uniform mat4 u_MVMatrix;	        // in: Matriz ModelView
 uniform mat4 u_VMatrix;             // in: Matriz View (cámara)
-uniform vec4 u_Color;		        // in: Color del objeto
+		        // in: Color del objeto
 uniform int  u_Luz0;                // in: Indica si la luz 0 está encedida
 
 varying vec4 v_Color;		        // out: Color al fragment shader
 varying vec2 a_UV2;
+
+
 void main()
 {
-    vec4 LightPos = u_VMatrix*vec4( -100, 100, 50, 1);		// Posición de la luz [fija]
+    vec4 LightPos = u_VMatrix*vec4( -100, 100, 50, 1);	// Posición de la luz [fija]
     vec3 P = vec3(u_MVMatrix * a_Position);	            // Posición del vértice
 	vec3 N = vec3(u_MVMatrix * vec4(a_Normal, 0.0));    // Normal del vértice
 
@@ -27,13 +29,17 @@ void main()
 	if (u_Luz0>0) {                                     // Si la luz 0 está encendida se calcula la intesidad difusa de L
         diffuse = max(dot(N, L), 0.0);		            // Cálculo de la int. difusa
         // Cálculo de la atenuación
-        float attenuation = 80.0/(0.25+(0.01*d)+(0.003*d*d));
-        diffuse = diffuse*attenuation;
+        float attenuation = 100.0/(0.25+(0.01*d)+(0.003*d*d));
+        diffuse *= attenuation;
+
+        vec3 vReflection = reflect(-L,N);
+        float spec = max(dot(N, vReflection), 0.0);
+        especular = pow(spec, 32.0);
+        especular *= attenuation;
 	}
 	a_UV2 = a_UV;
 	//vec4 t_Color = texture2D(u_TextureUnit, a_UV);
 	v_Color =  (ambient + diffuse + especular);
-
 
 	gl_Position = u_ProjectionMatrix * vec4(P, 1.0);
 }

@@ -123,14 +123,14 @@ static void movement(){
         }
         //std::cout << "RRY: " << car->rry << std::endl;
         if(arraymolon['a'] && (v>0.01 ||v<-0.01)){
-            if((car->rry)>-16)
-                car -> rry-=8;
+            if((car->rry)<16)
+                car -> rry+=8;
 
             car->ry += GIRO*(v/VMAX);
         }
         else if(arraymolon['d'] && (v>0.01 ||v<-0.01)){
-            if((car->rry)<16)
-                car -> rry+=8;
+            if((car->rry)>-16)
+                car -> rry-=8;
 
             car->ry -= GIRO*(v/VMAX);
         }
@@ -220,9 +220,12 @@ int main(int argc, char* argv[])
     // Crea los objetos
     TPrimitiva *road = new TPrimitiva(CARRETERA_ID, CARRETERA_ID);
     TPrimitiva *car1 = new TPrimitiva(1, COCHE_ID);
+    TPrimitiva *car2 = new TPrimitiva(2, COCHE_ID);
     TPrimitiva *rocks = new TPrimitiva(3, 20);
     TPrimitiva *lights = new TPrimitiva(LIGHTS_ID,LIGHTS_ID);
     TPrimitiva *building = new TPrimitiva(BUILDINGS_ID,BUILDINGS_ID);
+
+    car2->tx = -10;
 /*
     car2->colores[0][0] = 0.3;
     car2->colores[0][1] = 0.8;
@@ -238,6 +241,7 @@ int main(int argc, char* argv[])
 */
     escena.AddObject(road);
     escena.AddCar(car1);
+    escena.AddCar(car2);
     escena.AddObject(rocks);
     escena.AddObject(lights);
     escena.AddObject(building);

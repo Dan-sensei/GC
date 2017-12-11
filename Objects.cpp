@@ -128,20 +128,19 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
     glUniform1f(escena.uTextureUnitLocation, 0);
 
     switch (tipo) {
-        /*
         case LIGHTS_ID:{
-            std::cout<<"LUCEEEEEEEEES "  << std::endl;
             modelMatrix     = glm::mat4(1.0f);
             modelMatrix     = glm::translate(modelMatrix,glm::vec3(tx, ty, tz));
             modelViewMatrix = escena.viewMatrix * modelMatrix;
             glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
 
+            glBindTexture(GL_TEXTURE_2D, escena.texturas[0]);
 
             glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[1]);
             // Asociamos los vértices y sus normales
             glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0);
             glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0+3);
-
+            glVertexAttribPointer(escena.aUVLocation, UV_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0+6);
             glDrawArrays(GL_TRIANGLES, 0, num_vertices0);
 
 
@@ -149,7 +148,7 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
             // Asociamos los vértices y sus normales
             glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo1);
             glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo1+3);
-
+            glVertexAttribPointer(escena.aUVLocation, UV_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo1+6);
             glDrawArrays(GL_TRIANGLES, 0, num_vertices1);
 
             glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[1]);
@@ -170,13 +169,13 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
                 // Asociamos los vértices y sus normales
                 glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0);
                 glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0+3);
-
+                glVertexAttribPointer(escena.aUVLocation, UV_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0+6);
                 glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
 
                 glDrawArrays(GL_TRIANGLES, 0, num_vertices0);
 
             break;
-        }*/
+        }
         case CARRETERA_ID: {
             if (escena.show_road) {
                 // Cálculo de la ModelView
@@ -208,9 +207,10 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
         }
 
         case COCHE_ID: {
-            if (escena.show_car) {
 
-                glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
+            if (escena.show_car) {
+                //std::cout << "Pick ["<<glm::vec4(escena.pick/255.0)[0] <<"]"<< std::endl;
+
                 // Asociamos los vértices y sus normales
                 glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0);
                 glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0+3);
@@ -224,9 +224,18 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
 
                 modelViewMatrix = escena.viewMatrix * modelMatrix;
 
-                glBindTexture(GL_TEXTURE_2D, escena.texturas[0]);
+                if(ID==1)
+                    glBindTexture(GL_TEXTURE_2D, escena.texturas[0]);
+                else if(ID==2)
+                    glBindTexture(GL_TEXTURE_2D, escena.texturas[1]);
 
                 // Envía nuestra ModelView al Vertex Shader
+                if(escena.pick!=0){
+                    glUniform1i(escena.uColorLocationPick,escena.pick);
+                    glVertexAttribPointer(escena.aPositionLocationPick, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0);
+                    glUniformMatrix4fv(escena.uMVMatrixLocationPick, 1, GL_FALSE, &modelViewMatrix[0][0]);
+                }
+
                 glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
 
                 glDrawArrays(GL_TRIANGLES, 0, num_vertices0);
@@ -235,8 +244,6 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
 
             if (escena.show_wheels)
             {
-
-                glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[1]);
                 // Asociamos los vértices y sus normales
                 glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo1);
                 glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo1+3);
@@ -246,7 +253,7 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
 
                 modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx, ty+0.73, tz));
                 modelMatrix     = glm::translate(modelMatrix, glm::vec3(cos(ry*M_PI/180)*1.65 -sin(ry*M_PI/180)*6.45, 0, -cos(ry*M_PI/180)*6.45 - sin(ry*M_PI/180)*1.65));
-                modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(ry), glm::vec3(0,1,0));      // en radianes
+                modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rry+ry), glm::vec3(0,1,0));      // en radianes
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rr), glm::vec3(1,0,0));      // en radianes
 
                 modelViewMatrix = escena.viewMatrix * modelMatrix;
@@ -254,6 +261,11 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
 
                 // Envia nuestra ModelView al Vertex Shader
                 glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
+                if(escena.pick!=0){
+                    glUniform1i(escena.uColorLocationPick,escena.pick);
+                    glVertexAttribPointer(escena.aPositionLocationPick, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo1);
+                    glUniformMatrix4fv(escena.uMVMatrixLocationPick, 1, GL_FALSE, &modelViewMatrix[0][0]);
+                }
                 glDrawArrays(GL_TRIANGLES, 0, num_vertices1);
 
                 // RUEDA Trasera Derecha : Cálculo de la matriz modelo
@@ -267,22 +279,24 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
 
 
                 modelViewMatrix = escena.viewMatrix * modelMatrix;
-                glBindTexture(GL_TEXTURE_2D, escena.texturas[1]);
                 // Envia nuestra ModelView al Vertex Shader
                 glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
-
+                if(escena.pick!=0){
+                    glUniform1i(escena.uColorLocationPick,escena.pick);
+                    glVertexAttribPointer(escena.aPositionLocationPick, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo1);
+                    glUniformMatrix4fv(escena.uMVMatrixLocationPick, 1, GL_FALSE, &modelViewMatrix[0][0]);
+                }
                 glDrawArrays(GL_TRIANGLES, 0, num_vertices1);
 
                 // RUEDA Delantera Izquierda : Cálculo de la matriz modelo
                 modelMatrix     = glm::mat4(1.0f); // matriz identidad
                 modelMatrix     = glm::translate(modelMatrix, glm::vec3(tx, ty+0.73, tz));
                 modelMatrix     = glm::translate(modelMatrix, glm::vec3(-cos(ry*M_PI/180)*1.65 -sin(ry*M_PI/180)*6.45, 0, -cos(ry*M_PI/180)*6.45 + sin(ry*M_PI/180)*1.65));
-                modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(ry), glm::vec3(0,1,0));      // en radianes
+                modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rry+ry), glm::vec3(0,1,0));      // en radianes
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(rr), glm::vec3(1,0,0));
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(180.0), glm::vec3(0,1,0));
 
                 modelViewMatrix = escena.viewMatrix * modelMatrix;
-                glBindTexture(GL_TEXTURE_2D, escena.texturas[1]);
                 // Envia nuestra ModelView al Vertex Shader
                 glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
                 glDrawArrays(GL_TRIANGLES, 0, num_vertices1);
@@ -297,9 +311,13 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
 
                 modelMatrix     = glm::rotate(modelMatrix, (float) glm::radians(180.0), glm::vec3(0,1,0));
                 modelViewMatrix = escena.viewMatrix * modelMatrix;
-                glBindTexture(GL_TEXTURE_2D, escena.texturas[1]);
                 // Envia nuestra ModelView al Vertex Shader
                 glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
+                if(escena.pick!=0){
+                    glUniform1i(escena.uColorLocationPick,escena.pick);
+                    glVertexAttribPointer(escena.aPositionLocationPick, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo1);
+                    glUniformMatrix4fv(escena.uMVMatrixLocationPick, 1, GL_FALSE, &modelViewMatrix[0][0]);
+                }
                 glDrawArrays(GL_TRIANGLES, 0, num_vertices1);
 
                 break;
@@ -310,63 +328,70 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
             modelMatrix     = glm::mat4(1.0f);
             modelMatrix     = glm::translate(modelMatrix,glm::vec3(tx, ty, tz));
             modelViewMatrix = escena.viewMatrix * modelMatrix;
+            glBindTexture(GL_TEXTURE_2D, escena.texturas[2]);
+            glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
 
-/*
             glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
             glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0);
             glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0+3);
+            glVertexAttribPointer(escena.aUVLocation, UV_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0+6);
             glDrawArrays(GL_TRIANGLES, 0, num_vertices0);
-*/
+
             glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
             glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo1);
             glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo1+3);
             glVertexAttribPointer(escena.aUVLocation, UV_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo1+6);
-
-            glBindTexture(GL_TEXTURE_2D, escena.texturas[2]);
-            glUniformMatrix4fv(escena.uMVMatrixLocation, 1, GL_FALSE, &modelViewMatrix[0][0]);
             glDrawArrays(GL_TRIANGLES, 0, num_vertices1);
-/*
+
             glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
             glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo2);
             glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo2+3);
+            glVertexAttribPointer(escena.aUVLocation, UV_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo2+6);
             glDrawArrays(GL_TRIANGLES, 0, num_vertices2);
 
             glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
             glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo3);
             glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo3+3);
+            glVertexAttribPointer(escena.aUVLocation, UV_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo3+6);
             glDrawArrays(GL_TRIANGLES, 0, num_vertices3);
 
             glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
             glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo4);
             glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo4+3);
+            glVertexAttribPointer(escena.aUVLocation, UV_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo4+6);
             glDrawArrays(GL_TRIANGLES, 0, num_vertices4);
 
             glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
             glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo5);
             glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo5+3);
+            glVertexAttribPointer(escena.aUVLocation, UV_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo5+6);
             glDrawArrays(GL_TRIANGLES, 0, num_vertices5);
 
             glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
             glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo6);
             glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo6+3);
+            glVertexAttribPointer(escena.aUVLocation, UV_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo6+6);
             glDrawArrays(GL_TRIANGLES, 0, num_vertices6);
 
             glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
             glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo7);
             glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo7+3);
+            glVertexAttribPointer(escena.aUVLocation, UV_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo7+6);
             glDrawArrays(GL_TRIANGLES, 0, num_vertices7);
 
             glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
             glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo8);
             glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo8+3);
+            glVertexAttribPointer(escena.aUVLocation, UV_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo8+6);
             glDrawArrays(GL_TRIANGLES, 0, num_vertices8);
 
             glUniform4fv(escena.uColorLocation, 1, (const GLfloat *) colores[0]);
             glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo9);
             glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo9+3);
+            glVertexAttribPointer(escena.aUVLocation, UV_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo9+6);
             glDrawArrays(GL_TRIANGLES, 0, num_vertices9);
             break;
-        */}
+        }
 
     } // switch
 
@@ -395,7 +420,7 @@ TEscena::TEscena() {
     last_y = 0;
 
     vista = glm::lookAt(glm::vec3(0,10,15),glm::vec3(0,2,0), glm::vec3(0,1,0));
-
+    pick=0;
     memcpy(view_position, view_position_c, 3*sizeof(float));
     memcpy(view_rotate, view_rotate_c, 16*sizeof(float));
 
@@ -473,19 +498,43 @@ void __fastcall TEscena::InitGL()
     std::cout << "u_VMatrix Location: " << uVMatrixLocation << std::endl;
     std::cout << "u_Color Location: " << uColorLocation << std::endl;
     std::cout << "u_Luz0 Location: " << uLuz0Location << std::endl;
-    */
 
+    */
     // Habilitamos el paso de attributes
     glEnableVertexAttribArray(aPositionLocation);
     glEnableVertexAttribArray(aNormalLocation);
     glEnableVertexAttribArray(aUVLocation);
+
+
+    Shader shader2;
+    std::vector<GLuint> shaders2;
+    shaders2.push_back(shader2.LoadShader("../../Shaders/VertexShaderPick.glsl", GL_VERTEX_SHADER));
+    shaders2.push_back(shader2.LoadShader("../../Shaders/FragmentShaderPick.glsl", GL_FRAGMENT_SHADER));
+    shaderProgramPick = new Program(shaders2);
+
+    glUseProgram(shaderProgramPick->ReturnProgramID());
+
+    aPositionLocationPick=shaderProgramPick->attrib(A_POSITION);
+
+    uMVMatrixLocationPick=shaderProgramPick->uniform(U_MVMATRIX);
+    uProjectionMatrixLocationPick=shaderProgramPick->uniform(U_PROJECTIONMATRIX);
+    uColorLocationPick=shaderProgramPick->uniform(U_COLOR);
+
+    glEnableVertexAttribArray(aPositionLocationPick);
+
 
     // Estableciendo la matriz de proyección perspectiva
     GLUI_Master.get_viewport_area( &tx, &ty, &tw, &th );
     xy_aspect = (float)tw / (float)th;
     projectionMatrix = glm::perspective(45.0f, xy_aspect, 0.1f, 1000.0f);
     glUniformMatrix4fv(uProjectionMatrixLocation, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+    glUniformMatrix4fv(uProjectionMatrixLocationPick, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+
+    glUseProgram(shaderProgram->ReturnProgramID());
     glEnable(GL_TEXTURE_2D);
+
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_NORMALIZE);
 
     glGenTextures(10, escena.texturas);
     LoadTexture("../../Texturas/Only_Car2.jpg", 0);
@@ -574,25 +623,23 @@ void __fastcall TEscena::Render(){
     switch(gui.sel2){
         case 0: viewMatrix      = vista;
                 rotateMatrix    = glm::make_mat4(view_rotate);
-                //viewMatrix      = glm::translate(viewMatrix,glm::vec3(view_position[0], view_position[1], view_position[2]));
+                viewMatrix      = glm::translate(viewMatrix,glm::vec3(view_position[0], view_position[1], view_position[2]));
                 viewMatrix      = viewMatrix*rotateMatrix;
                 viewMatrix      = glm::scale(viewMatrix,glm::vec3(scale, scale, scale));
                 break;
 
-        case 1:
-                if(escena.seleccion!=0)
-                    viewMatrix      = glm::lookAt(glm::vec3(50,100,-50), glm::vec3(escena.cars[escena.seleccion-1]->tx,escena.cars[escena.seleccion-1]->ty,escena.cars[escena.seleccion-1]->tz), glm::vec3(0,1,0));
+        case 1: if(escena.seleccion!=0)
+                    viewMatrix = glm::lookAt(glm::vec3(escena.cars[escena.seleccion-1]->tx+50,100,-50 + escena.cars[escena.seleccion-1]->tz), glm::vec3(escena.cars[escena.seleccion-1]->tx,escena.cars[escena.seleccion-1]->ty,escena.cars[escena.seleccion-1]->tz), glm::vec3(0,1,0));
                 break;
 
         case 2: if(escena.seleccion!=0){
                     float x = escena.cars[escena.seleccion-1]->tx - view_position_c[0]*cos(glm::radians(escena.cars[escena.seleccion-1]->ry)) + sin(glm::radians(escena.cars[escena.seleccion-1]->ry))*view_position_c[2];
                     float z = escena.cars[escena.seleccion-1]->tz + cos(glm::radians(escena.cars[escena.seleccion-1]->ry))*view_position_c[2] + sin(glm::radians(escena.cars[escena.seleccion-1]->ry))*view_position_c[0];
-                    viewMatrix      = glm::lookAt(glm::vec3(x,view_position_c[1],z), glm::vec3(escena.cars[escena.seleccion-1]->tx,escena.cars[escena.seleccion-1]->ty,escena.cars[escena.seleccion-1]->tz), glm::vec3(0,1,0));
+                    viewMatrix = glm::lookAt(glm::vec3(x,view_position_c[1],z), glm::vec3(escena.cars[escena.seleccion-1]->tx,escena.cars[escena.seleccion-1]->ty,escena.cars[escena.seleccion-1]->tz), glm::vec3(0,1,0));
                 }
                 break;
 
     }
-
 
     glUniform1i(uLuz0Location, gui.light0_enabled);
     glUniformMatrix4fv(uVMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix)); // Para la luz matrix view pero sin escalado!
@@ -613,60 +660,72 @@ float* TEscena::getCamearInit(){
 // Selecciona un objeto a través del ratón
 void __fastcall TEscena::Pick3D(int mouse_x, int mouse_y)
 {
-    /*
+    std::cout<<"COORDENADAS - X " << mouse_x<< "  Y "<< mouse_y<< std::endl;
     unsigned char res[4];
     GLint viewport[4];
 
     renderSelection();
 
     glGetIntegerv(GL_VIEWPORT, viewport);
+    std::cout<<"VIEWPORT["<<viewport[0]<< "]["<<viewport[1]<< "]["<<viewport[2]<< "]["<<viewport[3]<<"]" <<std::endl;
     glReadPixels(mouse_x, viewport[3] - mouse_y, 1,1,GL_RGBA, GL_UNSIGNED_BYTE, &res);
+    std::cout<<"RES["<<res[0]<< "]["<<res[1]<< "]["<<res[2]<< "]["<<res[3]<<"]" <<std::endl;
     switch(res[0]) {
-        case 0: printf("Nothing Picked \n"); break;
-        case 1: printf("Picked yellow\n"); break;
-        case 2: printf("Picked red\n"); break;
-        case 3: printf("Picked green\n"); break;
-        case 4: printf("Picked blue\n"); break;
+        case 0: printf("Nothing Picked \n");escena.seleccion=0; break;
+        case 20: escena.seleccion=1; gui.sel=1; break;
+        case 40: escena.seleccion=2; gui.sel=2; break;
         default:printf("Res: %d\n", res[0]);
     }
-    */
-}
-/*
-void TEscena::renderSelection(void) {
 
+}
+
+void TEscena::renderSelection(void) {
+    glUseProgram(shaderProgramPick->ReturnProgramID());
+    glm::mat4 rotateMatrix;
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     //set matrices to identity
-    escena.viewMatrix = glm::mat4(1.0f);
-    // set camera as in the regular rendering function
-    escena.viewMatrix = glm::lookAt(glm::vec3(0,10,15),glm::vec3(0,2,0), glm::vec3(0,1,0));
+    viewMatrix    =  glm::lookAt(glm::vec3(0,10,15),glm::vec3(0,2,0), glm::vec3(0,1,0));
     // use the selection shader
 
-    Shader shader;
-    std::vector<GLuint> shaders;
-    shaders.push_back(shader.LoadShader("../../Shaders/VertexShaderPick.glsl", GL_VERTEX_SHADER));
-    shaders.push_back(shader.LoadShader("../../Shaders/FragmentShaderPick.glsl", GL_FRAGMENT_SHADER));
-    shaderProgramPick = new Program(shaders);
+    switch(gui.sel2){
+        case 0: viewMatrix      = vista;
+                rotateMatrix    = glm::make_mat4(view_rotate);
+                viewMatrix      = glm::translate(viewMatrix,glm::vec3(view_position[0], view_position[1], view_position[2]));
+                viewMatrix      = viewMatrix*rotateMatrix;
+                viewMatrix      = glm::scale(viewMatrix,glm::vec3(scale, scale, scale));
+                break;
 
-    glUseProgram(shaderProgram->ReturnProgramID());
+        case 1: if(escena.seleccion!=0)
+                    viewMatrix = glm::lookAt(glm::vec3(escena.cars[escena.seleccion-1]->tx+50,100,-50 + escena.cars[escena.seleccion-1]->tz), glm::vec3(escena.cars[escena.seleccion-1]->tx,escena.cars[escena.seleccion-1]->ty,escena.cars[escena.seleccion-1]->tz), glm::vec3(0,1,0));
+                break;
 
-    //perform the geometric transformations to place the first pawn
+        case 2: if(escena.seleccion!=0){
+                    float x = escena.cars[escena.seleccion-1]->tx - view_position_c[0]*cos(glm::radians(escena.cars[escena.seleccion-1]->ry)) + sin(glm::radians(escena.cars[escena.seleccion-1]->ry))*view_position_c[2];
+                    float z = escena.cars[escena.seleccion-1]->tz + cos(glm::radians(escena.cars[escena.seleccion-1]->ry))*view_position_c[2] + sin(glm::radians(escena.cars[escena.seleccion-1]->ry))*view_position_c[0];
+                    viewMatrix = glm::lookAt(glm::vec3(x,view_position_c[1],z), glm::vec3(escena.cars[escena.seleccion-1]->tx,escena.cars[escena.seleccion-1]->ty,escena.cars[escena.seleccion-1]->tz), glm::vec3(0,1,0));
+                }
+                break;
 
-    // set the uniform with the appropriate color code
-    glProgramUniform1i(shaderProgram->ReturnProgramID(), GLint 1, 1);
+    }
     // draw first pawn
-    ...
 
-    // repeat the above steps for the remaining objects, using different codes
-
+    pick=0;
+    for (int i=0; i<num_cars; i++){
+        pick+=20;
+        cars[i]->Render(seleccion, false);
+    }
     //don't swap buffers
     //glutSwapBuffers();
 
     // restore clear color if needed
+    //glUseProgram(shaderProgram->ReturnProgramID());
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glUseProgram(shaderProgram->ReturnProgramID());
+
 }
-*/
+
 //************************************************************** Clase TGui
 
 TGui::TGui()
@@ -707,7 +766,6 @@ void __fastcall TGui::Init(int main_window) {
     GLUI_RadioGroup *radioGroup = new GLUI_RadioGroup(panel0, &sel, SEL_ID, controlCallback);
     glui->add_radiobutton_to_group(radioGroup, "NINGUNO");
 
-
     glui->add_radiobutton_to_group(radioGroup, "COCHE 1");
     glui->add_radiobutton_to_group(radioGroup, "COCHE 2");
 
@@ -742,32 +800,24 @@ void __fastcall TGui::Init(int main_window) {
     GLUI_Panel *light1 = new GLUI_Panel( roll_lights, "Luz 2" );
 
     new GLUI_Checkbox( light0, "Encendida", &light0_enabled, LIGHT0_ENABLED_ID, controlCallback );
-    light0_spinner = new GLUI_Spinner( light0, "Intensidad:", &light0_intensity,
-                            LIGHT0_INTENSITY_ID, controlCallback );
+    light0_spinner = new GLUI_Spinner( light0, "Intensidad:", &light0_intensity, LIGHT0_INTENSITY_ID, controlCallback );
     light0_spinner->set_float_limits( 0.0, 1.0 );
     GLUI_Scrollbar *sb;
-    sb = new GLUI_Scrollbar( light0, "X",GLUI_SCROLL_HORIZONTAL,
-                            &escena.light0_position[0],LIGHT0_POSITION_ID,controlCallback);
+    sb = new GLUI_Scrollbar( light0, "X",GLUI_SCROLL_HORIZONTAL, &escena.light0_position[0],LIGHT0_POSITION_ID,controlCallback);
     sb->set_float_limits(-100,100);
-    sb = new GLUI_Scrollbar( light0, "Y",GLUI_SCROLL_HORIZONTAL,
-                            &escena.light0_position[1],LIGHT0_POSITION_ID,controlCallback);
+    sb = new GLUI_Scrollbar( light0, "Y",GLUI_SCROLL_HORIZONTAL, &escena.light0_position[1],LIGHT0_POSITION_ID,controlCallback);
     sb->set_float_limits(-100,100);
-    sb = new GLUI_Scrollbar( light0, "Z",GLUI_SCROLL_HORIZONTAL,
-                            &escena.light0_position[2],LIGHT0_POSITION_ID,controlCallback);
+    sb = new GLUI_Scrollbar( light0, "Z",GLUI_SCROLL_HORIZONTAL, &escena.light0_position[2],LIGHT0_POSITION_ID,controlCallback);
     sb->set_float_limits(-100,100);
 
     new GLUI_Checkbox( light1, "Encendida", &light1_enabled, LIGHT1_ENABLED_ID, controlCallback );
-    light1_spinner = new GLUI_Spinner( light1, "Intensidad:", &light1_intensity,
-                            LIGHT1_INTENSITY_ID, controlCallback );
+    light1_spinner = new GLUI_Spinner( light1, "Intensidad:", &light1_intensity, LIGHT1_INTENSITY_ID, controlCallback );
     light1_spinner->set_float_limits( 0.0, 1.0 );
-    sb = new GLUI_Scrollbar( light1, "X",GLUI_SCROLL_HORIZONTAL,
-                            &escena.light1_position[0],LIGHT1_POSITION_ID,controlCallback);
+    sb = new GLUI_Scrollbar( light1, "X",GLUI_SCROLL_HORIZONTAL, &escena.light1_position[0],LIGHT1_POSITION_ID,controlCallback);
     sb->set_float_limits(-100,100);
-    sb = new GLUI_Scrollbar( light1, "Y",GLUI_SCROLL_HORIZONTAL,
-                            &escena.light1_position[1],LIGHT1_POSITION_ID,controlCallback);
+    sb = new GLUI_Scrollbar( light1, "Y",GLUI_SCROLL_HORIZONTAL, &escena.light1_position[1],LIGHT1_POSITION_ID,controlCallback);
     sb->set_float_limits(-100,100);
-    sb = new GLUI_Scrollbar( light1, "Z",GLUI_SCROLL_HORIZONTAL,
-                            &escena.light1_position[2],LIGHT1_POSITION_ID,controlCallback);
+    sb = new GLUI_Scrollbar( light1, "Z",GLUI_SCROLL_HORIZONTAL, &escena.light1_position[2],LIGHT1_POSITION_ID,controlCallback);
     sb->set_float_limits(-100,100);
 
 

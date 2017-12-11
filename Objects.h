@@ -144,6 +144,11 @@ public: // Atributos de la clase
 		int uColorLocation;
 		int uLuz0Location;
 
+        int aPositionLocationPick;
+        int uMVMatrixLocationPick;
+        int uProjectionMatrixLocationPick;
+        int uColorLocationPick;
+
 		glm::mat4 projectionMatrix; // Almacena la matriz de proyección
         glm::mat4 viewMatrix;       // Almacena la matriz de la vista (cámara)
 
@@ -184,7 +189,7 @@ public: // Atributos de la clase
         glm::mat4 vista;
 
         float   scale;
-
+        int   pick;
         GLuint texturas[10];
 
 public: // Métodos
