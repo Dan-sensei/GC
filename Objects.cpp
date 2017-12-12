@@ -663,7 +663,7 @@ void __fastcall TEscena::Pick3D(int mouse_x, int mouse_y)
     std::cout<<"COORDENADAS - X " << mouse_x<< "  Y "<< mouse_y<< std::endl;
     unsigned char res[4];
     GLint viewport[4];
-
+    glUseProgram(shaderProgramPick->ReturnProgramID());
     renderSelection();
 
     glGetIntegerv(GL_VIEWPORT, viewport);
@@ -676,11 +676,11 @@ void __fastcall TEscena::Pick3D(int mouse_x, int mouse_y)
         case 40: escena.seleccion=2; gui.sel=2; break;
         default:printf("Res: %d\n", res[0]);
     }
-
+    glUseProgram(shaderProgram->ReturnProgramID());
 }
 
 void TEscena::renderSelection(void) {
-    glUseProgram(shaderProgramPick->ReturnProgramID());
+
     glm::mat4 rotateMatrix;
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -722,7 +722,6 @@ void TEscena::renderSelection(void) {
     // restore clear color if needed
     //glUseProgram(shaderProgram->ReturnProgramID());
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-    glUseProgram(shaderProgram->ReturnProgramID());
 
 }
 

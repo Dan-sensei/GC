@@ -39,7 +39,8 @@ void main()
 	}
 	a_UV2 = a_UV;
 	//vec4 t_Color = texture2D(u_TextureUnit, a_UV);
-	v_Color =  (ambient + diffuse + especular);
+	float c = ambient + diffuse + especular;
+	v_Color =  vec4(c,c,c,c);
 
 	gl_Position = u_ProjectionMatrix * vec4(P, 1.0);
 }
