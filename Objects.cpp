@@ -25,12 +25,17 @@ using namespace std;
 GLfloat light0_ambient_c[4]  = {   0.2f,   0.2f,  0.2f, 1.0f };
 GLfloat light0_diffuse_c[4]  = {   0.8f,   0.8f,  0.8f, 1.0f };
 GLfloat light0_specular_c[4] = {   1.0f,   1.0f,  1.0f, 1.0f };
-GLfloat light0_position_c[4] = {0.0f, 100.0f, -200.0f, 1.0f };
+GLfloat light0_position_c[4] = {-600.0f, 190.0f, 50.0f, 1.0f };
 
 GLfloat light1_ambient_c[4]  = {   0.2f,   0.2f,  0.2f, 1.0f };
 GLfloat light1_diffuse_c[4]  = {   0.8f,   0.8f,  0.8f, 1.0f };
 GLfloat light1_specular_c[4] = {   1.0f,   1.0f,  1.0f, 1.0f };
-GLfloat light1_position_c[4] = {   0.0f, 100.0f,  -200.0f, 1.0f };
+GLfloat light1_position_c[4] = {   0.0f, 180.0f,  -300.0f, 1.0f };
+
+GLfloat light2_ambient_c[4]  = {   0.2f,   0.2f,  0.2f, 1.0f };
+GLfloat light2_diffuse_c[4]  = {   0.8f,   0.8f,  0.8f, 1.0f };
+GLfloat light2_specular_c[4] = {   1.0f,   1.0f,  1.0f, 1.0f };
+GLfloat light2_position_c[4] = {   0.0f, 180.0f,  -650.0f, 1.0f };
 
 GLfloat mat_ambient_c[4]    = { 0.7f, 0.7f, 0.7f, 1.0f };
 GLfloat mat_diffuse_c[4]    = { 0.8f, 0.8f, 0.8f, 1.0f };
@@ -55,8 +60,7 @@ TGui    gui;
 
 //************************************************************** Clase TPrimitiva
 
-TPrimitiva::TPrimitiva(int DL, int t)
-{
+TPrimitiva::TPrimitiva(int DL, int t){
     ID   = DL;
     tipo = t;
     float constante_c = 1.0f/255;
@@ -116,8 +120,7 @@ TPrimitiva::TPrimitiva(int DL, int t)
 	} // switch
 }
 
-void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
-{
+void __fastcall TPrimitiva::Render(int seleccion, bool reflejo){
 
     float aux_x, aux_y, aux_z;
     glm::mat4   modelMatrix;
@@ -364,8 +367,7 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
     } // switch
 
 }
-void __fastcall TPrimitiva::RenderPick(void)
-{
+void __fastcall TPrimitiva::RenderPick(void){
     glm::mat4   modelMatrix;
     glm::mat4   modelViewMatrix;
     modelMatrix     = glm::mat4(1.0f); // matriz identidad
@@ -401,6 +403,7 @@ TEscena::TEscena() {
     last_x = 0;
     last_y = 0;
 
+
     vista = glm::lookAt(glm::vec3(0,10,15),glm::vec3(0,2,0), glm::vec3(0,1,0));
     pick=0;
     memcpy(view_position, view_position_c, 3*sizeof(float));
@@ -413,10 +416,16 @@ TEscena::TEscena() {
     memcpy(light0_specular, light0_specular_c, 4*sizeof(float));
     memcpy(light0_position, light0_position_c, 4*sizeof(float));
 
+
     memcpy(light1_ambient, light1_ambient_c, 4*sizeof(float));
     memcpy(light1_diffuse, light1_diffuse_c, 4*sizeof(float));
     memcpy(light1_specular, light1_specular_c, 4*sizeof(float));
     memcpy(light1_position, light1_position_c, 4*sizeof(float));
+
+    memcpy(light2_ambient, light2_ambient_c, 4*sizeof(float));
+    memcpy(light2_diffuse, light2_diffuse_c, 4*sizeof(float));
+    memcpy(light2_specular, light2_specular_c, 4*sizeof(float));
+    memcpy(light2_position, light2_position_c, 4*sizeof(float));
 
     memcpy(mat_ambient, mat_ambient_c, 4*sizeof(float));
     memcpy(mat_diffuse, mat_diffuse_c, 4*sizeof(float));
@@ -424,8 +433,7 @@ TEscena::TEscena() {
     memcpy(mat_shininess, mat_shininess_c, 1*sizeof(float));
 }
 
-void __fastcall TEscena::InitGL()
-{
+void __fastcall TEscena::InitGL(){
     int tx, ty, tw, th;
 
     // Habilita el z_buffer
@@ -468,8 +476,14 @@ void __fastcall TEscena::InitGL()
     uProjectionMatrixLocation=shaderProgram->uniform(U_PROJECTIONMATRIX);
     uMVMatrixLocation=shaderProgram->uniform(U_MVMATRIX);
     uVMatrixLocation=shaderProgram->uniform(U_VMATRIX);
-    //uColorLocation=shaderProgram->uniform(U_COLOR);
+
     uLuz0Location=shaderProgram->uniform(U_LUZ0);
+    uLuz1Location=shaderProgram->uniform(U_LUZ1);
+    uLuz2Location=shaderProgram->uniform(U_LUZ2);
+
+    uLuz0PosLocation=shaderProgram->uniform(U_LUZP_0);
+    uLuz1PosLocation=shaderProgram->uniform(U_LUZP_1);
+    uLuz2PosLocation=shaderProgram->uniform(U_LUZP_2);
 
     /*
     std::cout << "a_Position Location: " << aPositionLocation << std::endl;
@@ -548,24 +562,21 @@ void TEscena::LoadTexture(const char* path, unsigned char p){
 
 /************************** TEscena::AddCar(TPrimitiva *car) *****************/
 
-void __fastcall TEscena::AddCar(TPrimitiva *car)
-{
+void __fastcall TEscena::AddCar(TPrimitiva *car){
     cars[num_cars] = car;
     num_cars++;
 }
 
 /******************** TEscena::AddObject(TPrimitiva *object) *****************/
 
-void __fastcall TEscena::AddObject(TPrimitiva *object)
-{
+void __fastcall TEscena::AddObject(TPrimitiva *object){
     objects[num_objects] = object;
     num_objects++;
 }
 
 /******************** TPrimitiva *TEscena::GetCar(int id) ********************/
 
-TPrimitiva __fastcall *TEscena::GetCar(int id)
-{
+TPrimitiva __fastcall *TEscena::GetCar(int id){
     TPrimitiva *p=NULL;
 
     for (int i=0; i<num_cars; i++)
@@ -628,9 +639,17 @@ void __fastcall TEscena::Render(){
 
     }
 
+    //std::cout<< light0_position[0] <<" " << light0_position[1]<<" " << light0_position[2]<<" " << light0_position[3]<<" " <<std::endl;
     glUniform1i(uLuz0Location, gui.light0_enabled);
-    glUniformMatrix4fv(uVMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix)); // Para la luz matrix view pero sin escalado!
+    glUniform4f(uLuz0PosLocation, light0_position[0], light0_position[1], light0_position[2], light0_position[3]);
 
+    glUniform1i(uLuz1Location, gui.light1_enabled);
+    glUniform4f(uLuz1PosLocation, light1_position[0], light1_position[1], light1_position[2], light1_position[3]);
+
+    glUniform1i(uLuz2Location, gui.light2_enabled);
+    glUniform4f(uLuz2PosLocation, light2_position[0], light2_position[1], light2_position[2], light2_position[3]);
+
+    glUniformMatrix4fv(uVMatrixLocation, 1, GL_FALSE, glm::value_ptr(viewMatrix));
     // Dibujar carretera y objetos
     RenderObjects(seleccion);
 
@@ -645,8 +664,7 @@ float* TEscena::getCamearInit(){
 }
 
 // Selecciona un objeto a través del ratón
-void __fastcall TEscena::Pick3D(int mouse_x, int mouse_y)
-{
+void __fastcall TEscena::Pick3D(int mouse_x, int mouse_y){
     //std::cout<<"COORDENADAS - X " << mouse_x<< "  Y "<< mouse_y<< std::endl;
     unsigned char res[4];
     GLint viewport[4];
@@ -659,8 +677,8 @@ void __fastcall TEscena::Pick3D(int mouse_x, int mouse_y)
     printf("Res[%d]\n", res[0]);
     switch(res[0]) {
         case 0:  printf("Nothing Picked \n");escena.seleccion=0; break;
-        case 20: escena.seleccion=1; gui.sel=1; break;
-        case 40: escena.seleccion=2; gui.sel=2; break;
+        case 20: escena.seleccion=1; gui.sel=1; glutPostRedisplay();break;
+        case 40: escena.seleccion=2; gui.sel=2; glutPostRedisplay();break;
         default: printf("Res: %d\n", res[0]);
     }
     glUseProgram(shaderProgram->ReturnProgramID());
@@ -691,21 +709,20 @@ void __fastcall TEscena::renderSelection(glm::mat4 v) {
 
 //************************************************************** Clase TGui
 
-TGui::TGui()
-{
+TGui::TGui(){
     sel = 1;
     sel2 = 0;
     enable_panel2 = 1;
     light0_enabled = 1;
     light1_enabled = 1;
+    light2_enabled = 1;
     light0_intensity = 0.8;
     light1_intensity = 0.8;
     memcpy(light0_position, light0_position_c, 4*sizeof(float));
     memcpy(light1_position, light1_position_c, 4*sizeof(float));
 }
 
-void controlCallback(int control)
-{
+void controlCallback(int control){
     gui.ControlCallback(control);
 }
 
@@ -761,28 +778,38 @@ void __fastcall TGui::Init(int main_window) {
 
     GLUI_Panel *light0 = new GLUI_Panel( roll_lights, "Luz 1" );
     GLUI_Panel *light1 = new GLUI_Panel( roll_lights, "Luz 2" );
+    GLUI_Panel *light2 = new GLUI_Panel( roll_lights, "Luz 3" );
 
     new GLUI_Checkbox( light0, "Encendida", &light0_enabled, LIGHT0_ENABLED_ID, controlCallback );
     light0_spinner = new GLUI_Spinner( light0, "Intensidad:", &light0_intensity, LIGHT0_INTENSITY_ID, controlCallback );
     light0_spinner->set_float_limits( 0.0, 1.0 );
     GLUI_Scrollbar *sb;
     sb = new GLUI_Scrollbar( light0, "X",GLUI_SCROLL_HORIZONTAL, &escena.light0_position[0],LIGHT0_POSITION_ID,controlCallback);
-    sb->set_float_limits(-100,100);
+    sb->set_float_limits(-600,600);
     sb = new GLUI_Scrollbar( light0, "Y",GLUI_SCROLL_HORIZONTAL, &escena.light0_position[1],LIGHT0_POSITION_ID,controlCallback);
-    sb->set_float_limits(-100,100);
+    sb->set_float_limits(-100,300);
     sb = new GLUI_Scrollbar( light0, "Z",GLUI_SCROLL_HORIZONTAL, &escena.light0_position[2],LIGHT0_POSITION_ID,controlCallback);
-    sb->set_float_limits(-100,100);
+    sb->set_float_limits(-600,600);
 
     new GLUI_Checkbox( light1, "Encendida", &light1_enabled, LIGHT1_ENABLED_ID, controlCallback );
     light1_spinner = new GLUI_Spinner( light1, "Intensidad:", &light1_intensity, LIGHT1_INTENSITY_ID, controlCallback );
     light1_spinner->set_float_limits( 0.0, 1.0 );
     sb = new GLUI_Scrollbar( light1, "X",GLUI_SCROLL_HORIZONTAL, &escena.light1_position[0],LIGHT1_POSITION_ID,controlCallback);
-    sb->set_float_limits(-100,100);
+    sb->set_float_limits(-800,800);
     sb = new GLUI_Scrollbar( light1, "Y",GLUI_SCROLL_HORIZONTAL, &escena.light1_position[1],LIGHT1_POSITION_ID,controlCallback);
-    sb->set_float_limits(-100,100);
+    sb->set_float_limits(-100,300);
     sb = new GLUI_Scrollbar( light1, "Z",GLUI_SCROLL_HORIZONTAL, &escena.light1_position[2],LIGHT1_POSITION_ID,controlCallback);
-    sb->set_float_limits(-100,100);
+    sb->set_float_limits(-800,800);
 
+    new GLUI_Checkbox( light2, "Encendida", &light2_enabled, LIGHT2_ENABLED_ID, controlCallback );
+    light2_spinner = new GLUI_Spinner( light2, "Intensidad:", &light2_intensity, LIGHT2_INTENSITY_ID, controlCallback );
+    light2_spinner->set_float_limits( 0.0, 1.0 );
+    sb = new GLUI_Scrollbar( light2, "X",GLUI_SCROLL_HORIZONTAL, &escena.light2_position[0],LIGHT2_POSITION_ID,controlCallback);
+    sb->set_float_limits(-800,800);
+    sb = new GLUI_Scrollbar( light2, "Y",GLUI_SCROLL_HORIZONTAL, &escena.light2_position[1],LIGHT2_POSITION_ID,controlCallback);
+    sb->set_float_limits(-100,300);
+    sb = new GLUI_Scrollbar( light2, "Z",GLUI_SCROLL_HORIZONTAL, &escena.light2_position[2],LIGHT2_POSITION_ID,controlCallback);
+    sb->set_float_limits(-800,800);
 
     // Añade una separación
     new GLUI_StaticText( glui, "" );
@@ -850,8 +877,7 @@ void __fastcall TGui::Init(int main_window) {
 
 /**************************************** TGui::ControlCallback() *******************/
 
-void __fastcall TGui::ControlCallback( int control )
-{
+void __fastcall TGui::ControlCallback( int control ){
     switch (control) {
         case LIGHT0_ENABLED_ID: {
             if ( light0_enabled )
@@ -862,6 +888,13 @@ void __fastcall TGui::ControlCallback( int control )
         }
         case LIGHT1_ENABLED_ID: {
             if ( light1_enabled )
+                light1_spinner->enable();
+            else
+                light1_spinner->disable();
+            break;
+        }
+        case LIGHT2_ENABLED_ID: {
+            if ( light2_enabled )
                 light1_spinner->enable();
             else
                 light1_spinner->disable();
@@ -889,6 +922,17 @@ void __fastcall TGui::ControlCallback( int control )
             v[2] *= light1_intensity;
             break;
         }
+        case LIGHT2_INTENSITY_ID: {
+
+            float v[] = {
+                escena.light2_diffuse[0],  escena.light2_diffuse[1],
+                escena.light2_diffuse[2],  escena.light2_diffuse[3] };
+
+            v[0] *= light2_intensity;
+            v[1] *= light2_intensity;
+            v[2] *= light2_intensity;
+            break;
+        }
         case ENABLE_ID: {
             glui2->enable();
             break;
@@ -914,8 +958,7 @@ void __fastcall TGui::ControlCallback( int control )
 
 /***************************************** TGui::Idle() ***********/
 
-void __fastcall TGui::Idle( void )
-{
+void __fastcall TGui::Idle( void ){
   /* According to the GLUT specification, the current window is
      undefined during an idle callback.  So we need to explicitly change
      it if necessary */
@@ -935,8 +978,7 @@ void __fastcall TGui::Idle( void )
 
 /**************************************** TGui::reshape() *************/
 
-void __fastcall TGui::Reshape( int x, int y )
-{
+void __fastcall TGui::Reshape( int x, int y ){
     int tx, ty, tw, th;
     GLUI_Master.get_viewport_area( &tx, &ty, &tw, &th );
     glViewport( tx, ty, tw, th );
@@ -952,15 +994,13 @@ void __fastcall TGui::Reshape( int x, int y )
 
 /***************************************** gui::motion() **********/
 
-void __fastcall TGui::Motion(int x, int y )
-{
+void __fastcall TGui::Motion(int x, int y ){
     glutPostRedisplay();
 }
 
 /***************************************** gui::Mouse() **********/
 
-void __fastcall TGui::Mouse(int button, int button_state, int x, int y )
-{
+void __fastcall TGui::Mouse(int button, int button_state, int x, int y ){
     escena.Pick3D(x, y);
 }
 

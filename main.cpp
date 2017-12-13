@@ -74,7 +74,7 @@
 #include <GL\glui.h>
 #include <cmath>
 
-#define GIRO 12
+#define GIRO 8
 #define VMAX 5
 #define STOP 0.25
 #define ROZAMIENTO 0.01
@@ -200,7 +200,7 @@ int main(int argc, char* argv[])
     // Inicializa GLUT and crea la ventana principal
     glutInit(&argc, argv);
     glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_STENCIL | GLUT_MULTISAMPLE );
-    glutInitWindowPosition( 250, 250 );
+    glutInitWindowPosition( 100, 100 );
     glutInitWindowSize( 1400, 800 );
 
     int main_window = glutCreateWindow( "CarGL V2.0 (2015) con Shaders" );
