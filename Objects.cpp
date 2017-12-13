@@ -60,7 +60,6 @@ TPrimitiva::TPrimitiva(int DL, int t)
     ID   = DL;
     tipo = t;
     float constante_c = 1.0f/255;
-    std::cout<< "WTF"<<std::endl;
     tx = ty = tz = 0;
     sx = sy = sz = 1;
     rx = ry = rz = rr = rry = 0;

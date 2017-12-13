@@ -74,14 +74,14 @@
 #include <GL\glui.h>
 #include <cmath>
 
-#define GIRO 5
-#define VMAX 2
+#define GIRO 12
+#define VMAX 5
+#define STOP 0.25
+#define ROZAMIENTO 0.01
+#define GAS 0.08
 /**************************************** myGlutKeyboard() **********/
 bool arraymolon[256];
 float VELOZ=0;
-float GAS=0.03;
-float STOP = 0.02;
-float ROZAMIENTO = 0.007;
 
 void Keyboard(unsigned char Key, int x, int y){
     switch(Key){
@@ -95,6 +95,13 @@ void Keyboard(unsigned char Key, int x, int y){
 }
 
 /**************************************** mySpecialKey() *************/
+
+static inline int8_t sgn(float val) {
+ if (val < 0) return -1;
+ if (val==0) return 0;
+ return 1;
+}
+
 static void movement(){
     if(escena.seleccion!=0){
         TPrimitiva *car = escena.GetCar(escena.seleccion);
@@ -113,20 +120,18 @@ static void movement(){
             else if(arraymolon['s'] && VELOZ>-VMAX)
                 VELOZ -= GAS;
         }
+
         if(arraymolon['a'] ){
             if((car->rry)<16)
                 car -> rry+=8;
-            if(VELOZ>0.01 || VELOZ<-0.01)
-                car->ry += GIRO*(VELOZ/VMAX);
         }
         else if(arraymolon['d']){
             if((car->rry)>-16)
                 car -> rry-=8;
-            if ((VELOZ>0.01 ||VELOZ<-0.01))
-                car->ry -= GIRO*(VELOZ/VMAX);
         }
 
-        car->rr-=20*(VELOZ/VMAX);
+        car->ry += GIRO*(VELOZ/VMAX) * sgn(car->rry);
+        car->rr -= 20*(VELOZ/VMAX);
         car->tz -= std::cos(glm::radians(car->ry))*VELOZ;
         car->tx -= std::sin(glm::radians(car->ry))*VELOZ;
 
@@ -138,6 +143,12 @@ static void movement(){
 
             if(VELOZ>-0.001 && VELOZ<0.001) VELOZ=0;
         }
+
+        if(!arraymolon['a'] && car->rry>0)
+            car -> rry-=8;
+        else if(!arraymolon['d'] && car->rry<0)
+            car -> rry+=8;
+
         glutPostRedisplay();
     }
 
