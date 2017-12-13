@@ -25,7 +25,7 @@ using namespace std;
 GLfloat light0_ambient_c[4]  = {   0.2f,   0.2f,  0.2f, 1.0f };
 GLfloat light0_diffuse_c[4]  = {   0.8f,   0.8f,  0.8f, 1.0f };
 GLfloat light0_specular_c[4] = {   1.0f,   1.0f,  1.0f, 1.0f };
-GLfloat light0_position_c[4] = {-100.0f, 100.0f, 50.0f, 1.0f };
+GLfloat light0_position_c[4] = {0.0f, 100.0f, -200.0f, 1.0f };
 
 GLfloat light1_ambient_c[4]  = {   0.2f,   0.2f,  0.2f, 1.0f };
 GLfloat light1_diffuse_c[4]  = {   0.8f,   0.8f,  0.8f, 1.0f };
@@ -164,7 +164,7 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
                 modelMatrix     = glm::translate(modelMatrix,glm::vec3(tx, ty, tz));
                 modelViewMatrix = escena.viewMatrix * modelMatrix;
 
-                glBindTexture(GL_TEXTURE_2D, escena.texturas[6]);
+                glBindTexture(GL_TEXTURE_2D, escena.texturas[7]);
                 // Asociamos los vértices y sus normales
                 glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0);
                 glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo0+3);
@@ -323,8 +323,6 @@ void __fastcall TPrimitiva::Render(int seleccion, bool reflejo)
             glDrawArrays(GL_TRIANGLES, 0, num_vertices1);
 
             glBindTexture(GL_TEXTURE_2D, escena.texturas[6]);
-
-
             glVertexAttribPointer(escena.aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo3);
             glVertexAttribPointer(escena.aNormalLocation, NORMAL_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo3+3);
             glVertexAttribPointer(escena.aUVLocation, UV_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, modelo3+6);
@@ -529,6 +527,7 @@ void __fastcall TEscena::InitGL()
     LoadTexture("../../Texturas/Base.jpg", 4);
     LoadTexture("../../Texturas/Central.jpg", 5);
     LoadTexture("../../Texturas/DEFAULT.jpg", 6);
+    LoadTexture("../../Texturas/Rocks.jpg", 7);
 }
 
 void TEscena::LoadTexture(const char* path, unsigned char p){
