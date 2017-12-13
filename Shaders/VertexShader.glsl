@@ -6,7 +6,7 @@ attribute vec2 a_UV;                // in: Coordenadas UV de mapeado de textura
 uniform mat4 u_ProjectionMatrix; 	// in: Matriz Projection
 uniform mat4 u_MVMatrix;	        // in: Matriz ModelView
 uniform mat4 u_VMatrix;             // in: Matriz View (cámara)
-		        // in: Color del objeto
+                                    // in: Color del objeto
 uniform int  u_Luz0;                // in: Indica si la luz 0 está encedida
 
 varying vec4 v_Color;		        // out: Color al fragment shader

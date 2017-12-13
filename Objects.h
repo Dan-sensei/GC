@@ -118,6 +118,7 @@ public: // Atributos de la clase
 public: // Métodos
  		TPrimitiva(int DL, int tipo);
         void __fastcall Render(int seleccion, bool reflejo=false);
+        void __fastcall RenderPick(void);
 };
 
 //************************************************************** Clase TEscena
@@ -209,7 +210,8 @@ public: // Métodos
 
         float* getCamearInit();
         void LoadTexture(const char* path, unsigned char p);
-        void renderSelection(void);
+        void __fastcall renderSelection(glm::mat4 v);
+
 
 };
 

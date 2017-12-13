@@ -78,8 +78,10 @@
 #define VMAX 2
 /**************************************** myGlutKeyboard() **********/
 bool arraymolon[256];
-float v=0;
-float a=3;
+float VELOZ=0;
+float GAS=0.03;
+float STOP = 0.02;
+float ROZAMIENTO = 0.007;
 
 void Keyboard(unsigned char Key, int x, int y){
     switch(Key){
@@ -98,50 +100,43 @@ static void movement(){
         TPrimitiva *car = escena.GetCar(escena.seleccion);
         float* init;
         init = escena.getCamearInit();
-        //std::cout << "v = " << v << std::endl;
-        if(!arraymolon['s'] && (arraymolon['w'] || v>0)){
-            car->rr-=20*(v/VMAX);
 
-            if(arraymolon['w'] &&  v<0)
-                v += a*0.01;
-            else if(arraymolon['w'] && v<VMAX)
-                v += a*0.005;
-
-            car->tz -= std::cos(glm::radians(car->ry))*v;
-            car->tx -= std::sin(glm::radians(car->ry))*v;
+        if(!arraymolon['s'] && (arraymolon['w'] || VELOZ>0)){
+            if(arraymolon['w'] &&  VELOZ<0)
+                VELOZ += STOP;
+            else if(arraymolon['w'] && VELOZ<VMAX)
+                VELOZ += GAS;
         }
-        if(!arraymolon['w'] && (arraymolon['s'] || v<0)){
-            car->rr-=20*(v/VMAX);
-
-            if(arraymolon['s'] &&  v>0)
-                v -= a*0.01;
-            else if(arraymolon['s'] && v>-VMAX)
-                v -= a*0.005;
-
-            car->tz -= std::cos(glm::radians(car->ry))*v;
-            car->tx -= std::sin(glm::radians(car->ry))*v;
+        if(!arraymolon['w'] && (arraymolon['s'] || VELOZ<0)){
+            if(arraymolon['s'] &&  VELOZ>0)
+                VELOZ -= STOP;
+            else if(arraymolon['s'] && VELOZ>-VMAX)
+                VELOZ -= GAS;
         }
-        //std::cout << "RRY: " << car->rry << std::endl;
-        if(arraymolon['a'] && (v>0.01 ||v<-0.01)){
+        if(arraymolon['a'] ){
             if((car->rry)<16)
                 car -> rry+=8;
-
-            car->ry += GIRO*(v/VMAX);
+            if(VELOZ>0.01 || VELOZ<-0.01)
+                car->ry += GIRO*(VELOZ/VMAX);
         }
-        else if(arraymolon['d'] && (v>0.01 ||v<-0.01)){
+        else if(arraymolon['d']){
             if((car->rry)>-16)
                 car -> rry-=8;
-
-            car->ry -= GIRO*(v/VMAX);
+            if ((VELOZ>0.01 ||VELOZ<-0.01))
+                car->ry -= GIRO*(VELOZ/VMAX);
         }
 
-        if(!arraymolon['w'] && !arraymolon['s'] && v!=0){
-            if(v>0.001)
-                v -= a*0.001;
-            else if(v<-0.001)
-                v += a*0.001;
+        car->rr-=20*(VELOZ/VMAX);
+        car->tz -= std::cos(glm::radians(car->ry))*VELOZ;
+        car->tx -= std::sin(glm::radians(car->ry))*VELOZ;
 
-            if(v>-0.001 && v<0.001) v=0;
+        if(!arraymolon['w'] && !arraymolon['s'] && VELOZ!=0){
+            if(VELOZ>0.001)
+                VELOZ -= ROZAMIENTO;
+            else if(VELOZ<-0.001)
+                VELOZ += ROZAMIENTO;
+
+            if(VELOZ>-0.001 && VELOZ<0.001) VELOZ=0;
         }
         glutPostRedisplay();
     }
