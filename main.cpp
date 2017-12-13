@@ -75,10 +75,10 @@
 #include <cmath>
 
 #define GIRO 8
-#define VMAX 5
+#define VMAX 4.2
 #define STOP 0.25
 #define ROZAMIENTO 0.01
-#define GAS 0.08
+#define GAS 0.15
 /**************************************** myGlutKeyboard() **********/
 bool arraymolon[256];
 float VELOZ=0;

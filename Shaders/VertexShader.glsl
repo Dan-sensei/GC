@@ -50,7 +50,7 @@ void main()
         vec3 vReflection = reflect(-L,N);
         float spec = max(dot(N, vReflection), 0.0);
         especular = pow(spec, 32.0);
-        especular *= attenuation;
+        especular *= d/50 * attenuation;
 	}
     float c = ambient + diffuse + especular;
 

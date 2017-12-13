@@ -30,12 +30,12 @@ GLfloat light0_position_c[4] = {-600.0f, 190.0f, 50.0f, 1.0f };
 GLfloat light1_ambient_c[4]  = {   0.2f,   0.2f,  0.2f, 1.0f };
 GLfloat light1_diffuse_c[4]  = {   0.8f,   0.8f,  0.8f, 1.0f };
 GLfloat light1_specular_c[4] = {   1.0f,   1.0f,  1.0f, 1.0f };
-GLfloat light1_position_c[4] = {   0.0f, 180.0f,  -300.0f, 1.0f };
+GLfloat light1_position_c[4] = {   0.0f, 250.0f,  -300.0f, 1.0f };
 
 GLfloat light2_ambient_c[4]  = {   0.2f,   0.2f,  0.2f, 1.0f };
 GLfloat light2_diffuse_c[4]  = {   0.8f,   0.8f,  0.8f, 1.0f };
 GLfloat light2_specular_c[4] = {   1.0f,   1.0f,  1.0f, 1.0f };
-GLfloat light2_position_c[4] = {   0.0f, 180.0f,  -650.0f, 1.0f };
+GLfloat light2_position_c[4] = {   0.0f, 250.0f,  -650.0f, 1.0f };
 
 GLfloat mat_ambient_c[4]    = { 0.7f, 0.7f, 0.7f, 1.0f };
 GLfloat mat_diffuse_c[4]    = { 0.8f, 0.8f, 0.8f, 1.0f };
