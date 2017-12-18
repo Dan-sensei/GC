@@ -25,7 +25,7 @@ using namespace std;
 GLfloat light0_ambient_c[4]  = {   0.2f,   0.2f,  0.2f, 1.0f };
 GLfloat light0_diffuse_c[4]  = {   0.8f,   0.8f,  0.8f, 1.0f };
 GLfloat light0_specular_c[4] = {   1.0f,   1.0f,  1.0f, 1.0f };
-GLfloat light0_position_c[4] = {-600.0f, 190.0f, 50.0f, 1.0f };
+GLfloat light0_position_c[4] = {-400.0f, 190.0f, 50.0f, 1.0f };
 
 GLfloat light1_ambient_c[4]  = {   0.2f,   0.2f,  0.2f, 1.0f };
 GLfloat light1_diffuse_c[4]  = {   0.8f,   0.8f,  0.8f, 1.0f };

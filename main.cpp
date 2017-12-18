@@ -107,7 +107,7 @@ static void movement(){
         TPrimitiva *car = escena.GetCar(escena.seleccion);
         float* init;
         init = escena.getCamearInit();
-
+std::cout<<"view_position["<< std::endl;
         if(!arraymolon['s'] && (arraymolon['w'] || VELOZ>0)){
             if(arraymolon['w'] &&  VELOZ<0)
                 VELOZ += STOP;

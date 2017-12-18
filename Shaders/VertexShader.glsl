@@ -65,7 +65,7 @@ void main()
         especular = pow(spec, 32.0);
         especular *= attenuation;
 	}
-    c += ambient + diffuse + especular;
+    c += diffuse + especular;
 
 	if(u_Luz2>0){
         diffuse = max(dot(N, L2), 0.0);		            // Cálculo de la int. difusa
@@ -81,7 +81,7 @@ void main()
 
 	a_UV2 = a_UV;
 	//vec4 t_Color = texture2D(u_TextureUnit, a_UV);
-	c += ambient + diffuse + especular;
+	c += diffuse + especular;
 	v_Color =  vec4(c,c,c,c);
 
 	gl_Position = u_ProjectionMatrix * vec4(P, 1.0);
